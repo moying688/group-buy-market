@@ -1,26 +1,26 @@
-package com.moying.infrastructure.dao.po;
+package com.moying.domain.activity.model.valobj;
 
-import lombok.*;
-
-import java.time.LocalDateTime;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.checkerframework.checker.units.qual.A;
 
 import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
- * 拼团活动实体类
+ * @Author: moying
+ * @CreateTime: 2025-04-27
+ * @Description:
  */
+
+
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GroupBuyActivity {
-
-    /** 自增ID */
-    private Long id;
-
+@Builder
+public class GroupBuyActivityDiscountVO {
     /** 活动ID */
     private Long activityId;
     /** 活动名称 */
@@ -35,8 +35,8 @@ public class GroupBuyActivity {
     /** 商品ID */
     private String goodsId;
 
-    /** 折扣ID */
-    private String discountId;
+    /** 折扣配置 */
+    private GroupBuyDiscount groupBuyDiscount;
 
     /** 拼团方式（0自动成团、1达成目标拼团） */
     private Integer groupType;
@@ -65,9 +65,28 @@ public class GroupBuyActivity {
     /** 人群标签规则范围（1可见限制、2参与限制） */
     private String tagScope;
 
-    /** 创建时间 */
-    private Date createTime;
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class GroupBuyDiscount{
 
-    /** 更新时间 */
-    private Date updateTime;
+        /** 折扣标题 */
+        private String discountName;
+
+        /** 折扣描述 */
+        private String discountDesc;
+
+        /** 折扣类型（0:base、1:tag） */
+        private Integer discountType;
+
+        /** 营销优惠计划（ZJ:直减、MJ:满减、N元购） */
+        private String marketPlan;
+
+        /** 营销优惠表达式 */
+        private String marketExpr;
+
+        /** 人群标签，特定优惠限定 */
+        private String tagId;
+    }
 }

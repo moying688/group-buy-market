@@ -15,5 +15,16 @@ import java.util.List;
 public interface IGroupBuyDiscountDao {
 
 
+    /**
+     * 查询拼团折扣表列表
+     * @return 拼团折扣表列表
+     */
     List<GroupBuyDiscount> queryGroupBuyDiscountList();
+
+    /**
+     * 根据折扣ID查询拼团折扣表
+     * @param discountId 折扣ID
+     * @return 拼团折扣表
+     */
+    GroupBuyDiscount queryGroupBuyDiscountByDiscountId(String discountId);
 }

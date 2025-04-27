@@ -8,6 +8,11 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+/**
+ * 拼团折扣实体类
+ * @author moying
+ * @date 2025-04-27
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

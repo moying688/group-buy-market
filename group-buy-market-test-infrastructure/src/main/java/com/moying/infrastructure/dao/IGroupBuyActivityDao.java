@@ -2,6 +2,7 @@ package com.moying.infrastructure.dao;
 
 
 import com.moying.infrastructure.dao.po.GroupBuyActivity;
+import com.moying.infrastructure.dao.po.GroupBuyDiscount;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -15,5 +16,15 @@ import java.util.List;
 @Mapper
 public interface IGroupBuyActivityDao {
 
+    /**
+     * 查询拼团活动表列表
+     * @return 拼团活动表列表
+     */
     List<GroupBuyActivity> queryGroupBuyActivityList();
+
+    /**
+     * 查询拼团活动表详情
+     * @return 拼团活动表详情
+     */
+    GroupBuyActivity queryValidGroupBuyActivity(GroupBuyActivity groupBuyActivityReq);
 }

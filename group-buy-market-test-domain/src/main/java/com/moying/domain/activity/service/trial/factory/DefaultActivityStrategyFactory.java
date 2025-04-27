@@ -2,6 +2,8 @@ package com.moying.domain.activity.service.trial.factory;
 
 import com.moying.domain.activity.model.entity.MarketProductEntity;
 import com.moying.domain.activity.model.entity.TrialBalanceEntity;
+import com.moying.domain.activity.model.valobj.GroupBuyActivityDiscountVO;
+import com.moying.domain.activity.model.valobj.SkuVO;
 import com.moying.domain.activity.service.trial.node.RootNode;
 import com.moying.types.design.framework.tree.StrategyHandler;
 import lombok.AllArgsConstructor;
@@ -36,6 +38,8 @@ public class DefaultActivityStrategyFactory {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class DynamicContext{
+        private GroupBuyActivityDiscountVO groupBuyActivityDiscountVO;
+        private SkuVO skuVO;
 
     }
 }
