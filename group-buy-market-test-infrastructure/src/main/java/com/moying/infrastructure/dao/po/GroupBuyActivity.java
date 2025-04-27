@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 拼团活动实体类
@@ -63,8 +64,8 @@ public class GroupBuyActivity {
     private String tagScope;
 
     /** 创建时间 */
-    private LocalDateTime createTime;
+    private Date createTime;
 
     /** 更新时间 */
-    private LocalDateTime updateTime;
+    private Date updateTime;
 }

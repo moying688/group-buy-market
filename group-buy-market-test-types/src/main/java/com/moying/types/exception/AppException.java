@@ -3,6 +3,9 @@ package com.moying.types.exception;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Map;
+import java.util.PriorityQueue;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class AppException extends RuntimeException {
@@ -25,6 +28,7 @@ public class AppException extends RuntimeException {
     }
 
     public AppException(String code, String message) {
+
         this.code = code;
         this.info = message;
     }
