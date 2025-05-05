@@ -22,9 +22,7 @@ public interface IGroupBuyActivityDao {
      */
     List<GroupBuyActivity> queryGroupBuyActivityList();
 
-    /**
-     * 查询拼团活动表详情
-     * @return 拼团活动表详情
-     */
-    GroupBuyActivity queryValidGroupBuyActivity(GroupBuyActivity groupBuyActivityReq);
+
+
+    GroupBuyActivity queryByActivityId(Long activityId);
 }

@@ -28,7 +28,6 @@ public class AppException extends RuntimeException {
     }
 
     public AppException(String code, String message) {
-
         this.code = code;
         this.info = message;
     }
@@ -41,7 +40,7 @@ public class AppException extends RuntimeException {
 
     @Override
     public String toString() {
-        return "com.moying.x.api.types.exception.XApiException{" +
+        return "cn.bugstack.x.api.types.exception.XApiException{" +
                 "code='" + code + '\'' +
                 ", info='" + info + '\'' +
                 '}';

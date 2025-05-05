@@ -1,6 +1,7 @@
 package com.moying.domain.activity.adapter.repository;
 
 import com.moying.domain.activity.model.valobj.GroupBuyActivityDiscountVO;
+import com.moying.domain.activity.model.valobj.SCSkuActivityVO;
 import com.moying.domain.activity.model.valobj.SkuVO;
 
 /**
@@ -11,7 +12,9 @@ import com.moying.domain.activity.model.valobj.SkuVO;
 
 public interface IActivityRepository {
 
-    public GroupBuyActivityDiscountVO queryGroupBuyActivityDiscountVO(String source,String channel);
+    public GroupBuyActivityDiscountVO queryGroupBuyActivityDiscountVO(Long activityId);
 
     SkuVO querySkuByGoodsId(String goodsId);
+
+    SCSkuActivityVO querySCSkuActivityBySCGoodsId(String source, String channel, String goodsId);
 }
