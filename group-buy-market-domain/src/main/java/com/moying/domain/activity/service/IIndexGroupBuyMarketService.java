@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 /**
  * @Author: moying
  * @CreateTime: 2025-04-27
- * @Description:
+ * @Description: 首页团购市场服务接口
  */
 
 

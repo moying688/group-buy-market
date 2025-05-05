@@ -50,6 +50,8 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
      * @param dynamicContext
      * @throws Exception
      */
+
+
     @Override
     protected void multiThread(MarketProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws Exception {
         // 异步查询活动配置

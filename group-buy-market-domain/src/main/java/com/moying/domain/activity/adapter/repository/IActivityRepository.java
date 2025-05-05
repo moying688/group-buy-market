@@ -6,7 +6,7 @@ import com.moying.domain.activity.model.valobj.SkuVO;
 /**
  * @Author: moying
  * @CreateTime: 2025-04-27
- * @Description:
+ * @Description: 活动仓储
  */
 
 public interface IActivityRepository {
