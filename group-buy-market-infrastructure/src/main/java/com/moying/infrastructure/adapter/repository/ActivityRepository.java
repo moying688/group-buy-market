@@ -13,6 +13,9 @@ import com.moying.infrastructure.dao.po.GroupBuyActivity;
 import com.moying.infrastructure.dao.po.GroupBuyDiscount;
 import com.moying.infrastructure.dao.po.SCSkuActivity;
 import com.moying.infrastructure.dao.po.Sku;
+import com.moying.infrastructure.redis.IRedisService;
+import com.moying.infrastructure.redis.RedissonService;
+import org.redisson.api.RBitSet;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -20,7 +23,7 @@ import javax.annotation.Resource;
 /**
  * @Author: moying
  * @CreateTime: 2025-04-27
- * @Description:
+ * @Description: 活动仓储
  */
 
 
@@ -38,6 +41,9 @@ public class ActivityRepository implements IActivityRepository {
     @Resource
     private ISCSkuActivityDao skuActivityDao;
 
+    @Resource
+    private IRedisService redisService;
+
     @Override
     public GroupBuyActivityDiscountVO queryGroupBuyActivityDiscountVO(Long activityId) {
         // 构建查询条件  根据SC渠道值查询配置中最新的1个有效的活动
@@ -49,6 +55,7 @@ public class ActivityRepository implements IActivityRepository {
         String discountId = groupBuyActivityRes.getDiscountId();
         GroupBuyDiscount groupBuyDiscountRes = groupBuyDiscountDao.queryGroupBuyDiscountByDiscountId(discountId);
 
+        if (null == groupBuyDiscountRes) return null;
 
         GroupBuyActivityDiscountVO.GroupBuyDiscount groupBuyDiscount = GroupBuyActivityDiscountVO.GroupBuyDiscount.builder()
                 .discountName(groupBuyDiscountRes.getDiscountName())
@@ -101,5 +108,12 @@ public class ActivityRepository implements IActivityRepository {
                 .activityId(scSkuActivity.getActivityId())
                 .goodsId(scSkuActivity.getGoodsId())
                 .build();
+    }
+
+    @Override
+    public boolean isTagCrowdRange(String tagId, String userId) {
+        RBitSet bitSet = redisService.getBitSet(tagId);
+        if (!bitSet.isExists()) return true;
+        return bitSet.get(redisService.getIndexFromUserId(userId));
     }
 }

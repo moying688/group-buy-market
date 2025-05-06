@@ -28,10 +28,13 @@ public class IIndexGroupBuyMarketServiceTest {
     private IIndexGroupBuyMarketService indexGroupBuyMarketService;
 
 
+    /**
+     * 测试人群标签功能的时候，可以进入 ITagServiceTest#test_tag_job 执行人群写入
+     */
     @Test
     public void test_indexMarketTrial() throws Exception {
         MarketProductEntity marketProductEntity = new MarketProductEntity();
-        marketProductEntity.setUserId("xiaofuge");
+        marketProductEntity.setUserId("moying");
         marketProductEntity.setSource("s01");
         marketProductEntity.setChannel("c01");
         marketProductEntity.setGoodsId("9890001");
@@ -42,15 +45,17 @@ public class IIndexGroupBuyMarketServiceTest {
     }
 
     @Test
-    public void test_indexMarketTrial_error() throws Exception {
+    public void test_indexMarketTrial_no_tag() throws Exception {
         MarketProductEntity marketProductEntity = new MarketProductEntity();
-        marketProductEntity.setUserId("xiaofuge");
+        marketProductEntity.setUserId("test1");
         marketProductEntity.setSource("s01");
         marketProductEntity.setChannel("c01");
-        marketProductEntity.setGoodsId("9890002");
+        marketProductEntity.setGoodsId("9890001");
 
         TrialBalanceEntity trialBalanceEntity = indexGroupBuyMarketService.indexMarketTrial(marketProductEntity);
         log.info("请求参数:{}", JSON.toJSONString(marketProductEntity));
         log.info("返回结果:{}", JSON.toJSONString(trialBalanceEntity));
     }
+
+
 }

@@ -45,6 +45,9 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
     private ErrorNode errorNode;
 
     @Resource
+    private TagNode tagNode;
+
+    @Resource
     private Map<String, IDiscountCalculateService> discountCalculateServiceMap;
 
     /**
@@ -79,12 +82,14 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
         log.info("拼团商品查询试算服务-MarketNode userId:{} requestParameter:{}", requestParameter.getUserId(), JSON.toJSONString(requestParameter));
 
         GroupBuyActivityDiscountVO groupBuyActivityDiscountVO = dynamicContext.getGroupBuyActivityDiscountVO();
+        // 如果不存在拼团活动折扣信息，直接走异常节点
         if (null == groupBuyActivityDiscountVO) {
             return router(requestParameter, dynamicContext);
         }
         GroupBuyActivityDiscountVO.GroupBuyDiscount groupBuyDiscount = groupBuyActivityDiscountVO.getGroupBuyDiscount();
         SkuVO skuVO = dynamicContext.getSkuVO();
 
+        // 如果不存在拼团活动配置，直接走异常节点
         if (null == groupBuyDiscount || null == skuVO) {
             return router(requestParameter, dynamicContext);
         }
@@ -108,6 +113,6 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
         if (null == dynamicContext.getGroupBuyActivityDiscountVO() || null == dynamicContext.getSkuVO() || null == dynamicContext.getDeductionPrice()) {
             return errorNode;
         }
-        return endNode;
+        return tagNode;
     }
 }
