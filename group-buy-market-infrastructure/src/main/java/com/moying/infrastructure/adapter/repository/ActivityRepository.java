@@ -15,7 +15,6 @@ import com.moying.infrastructure.dao.po.SCSkuActivity;
 import com.moying.infrastructure.dao.po.Sku;
 import com.moying.infrastructure.dcc.DCCService;
 import com.moying.infrastructure.redis.IRedisService;
-import com.moying.infrastructure.redis.RedissonService;
 import org.redisson.api.RBitSet;
 import org.springframework.stereotype.Repository;
 

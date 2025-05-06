@@ -79,6 +79,12 @@
             <version>2.9.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.etcd</groupId>
+            <artifactId>jetcd-core</artifactId>
+            <version>0.7.5</version>
+        </dependency>
+
         <!-- 工程模块；启动依赖 trigger->domain, infrastructure-->
         <dependency>
             <groupId>com.moying</groupId>
