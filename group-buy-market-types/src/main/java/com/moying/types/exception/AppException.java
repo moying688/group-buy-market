@@ -1,5 +1,6 @@
 package com.moying.types.exception;
 
+import com.moying.types.enums.ResponseCode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,6 +21,11 @@ public class AppException extends RuntimeException {
 
     public AppException(String code) {
         this.code = code;
+    }
+
+    public AppException(ResponseCode responseCode) {
+        this.code = responseCode.getCode();
+        this.info = responseCode.getInfo();
     }
 
     public AppException(String code, Throwable cause) {
