@@ -12,7 +12,7 @@ import com.moying.domain.trade.model.valobj.GroupBuyProgressVO;
  * @Description: 交易订单服务接口
  */
 
-public interface ITradeOrderService {
+public interface ITradeLockOrderService {
 
     /**
      * 查询，未被支付消费完成的营销优惠订单
@@ -42,5 +42,7 @@ public interface ITradeOrderService {
      * @return 拼团，预购订单营销实体对象
      */
     MarketPayOrderEntity lockMarketPayOrder(UserEntity userEntity, PayActivityEntity payActivityEntity, PayDiscountEntity payDiscountEntity) throws Exception;
+
+
 
 }

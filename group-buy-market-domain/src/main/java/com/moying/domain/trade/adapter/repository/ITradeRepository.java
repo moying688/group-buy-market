@@ -1,7 +1,9 @@
 package com.moying.domain.trade.adapter.repository;
 
 import com.moying.domain.trade.model.aggregate.GroupBuyOrderAggregate;
+import com.moying.domain.trade.model.aggregate.GroupBuyTeamSettlementAggregate;
 import com.moying.domain.trade.model.entity.GroupBuyActivityEntity;
+import com.moying.domain.trade.model.entity.GroupBuyTeamEntity;
 import com.moying.domain.trade.model.entity.MarketPayOrderEntity;
 import com.moying.domain.trade.model.valobj.GroupBuyProgressVO;
 
@@ -32,4 +34,10 @@ public interface ITradeRepository {
 
     // 查询用户参与活动的订单量
     Integer queryOrderCountByActivityId(Long activityId, String userId);
+
+    // 查询团购活动
+    GroupBuyTeamEntity queryGroupBuyTeamByTeamId(String teamId);
+
+    // 结算拼团订单
+    void settlementMarketPayOrder(GroupBuyTeamSettlementAggregate groupBuyTeamSettlementAggregate);
 }
