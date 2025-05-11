@@ -2,7 +2,6 @@ package com.moying.infrastructure.dao;
 
 
 import com.moying.infrastructure.dao.po.GroupBuyActivity;
-import com.moying.infrastructure.dao.po.GroupBuyDiscount;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -24,5 +23,7 @@ public interface IGroupBuyActivityDao {
 
 
 
-    GroupBuyActivity queryByActivityId(Long activityId);
+    GroupBuyActivity queryValidGroupBuyActivityId(Long activityId);
+
+    GroupBuyActivity queryGroupBuyActivityByActivityId(Long activityId);
 }

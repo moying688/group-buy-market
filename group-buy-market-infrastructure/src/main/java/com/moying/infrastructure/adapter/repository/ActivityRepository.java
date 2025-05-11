@@ -15,7 +15,6 @@ import com.moying.infrastructure.dao.po.SCSkuActivity;
 import com.moying.infrastructure.dao.po.Sku;
 import com.moying.infrastructure.dcc.DCCService;
 import com.moying.infrastructure.redis.IRedisService;
-import com.moying.infrastructure.redis.RedissonService;
 import org.redisson.api.RBitSet;
 import org.springframework.stereotype.Repository;
 
@@ -50,7 +49,7 @@ public class ActivityRepository implements IActivityRepository {
     public GroupBuyActivityDiscountVO queryGroupBuyActivityDiscountVO(Long activityId) {
         // 构建查询条件  根据SC渠道值查询配置中最新的1个有效的活动
 
-        GroupBuyActivity groupBuyActivityRes = groupBuyActivityDao.queryByActivityId(activityId);
+        GroupBuyActivity groupBuyActivityRes = groupBuyActivityDao.queryValidGroupBuyActivityId(activityId);
         if (null == groupBuyActivityRes) return null;
 
         // 根据活动ID查询活动折扣信息
