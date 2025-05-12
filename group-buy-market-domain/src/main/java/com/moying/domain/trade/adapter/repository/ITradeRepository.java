@@ -40,4 +40,6 @@ public interface ITradeRepository {
 
     // 结算拼团订单
     void settlementMarketPayOrder(GroupBuyTeamSettlementAggregate groupBuyTeamSettlementAggregate);
+
+    boolean isSCBlackIntercept(String source, String channel);
 }

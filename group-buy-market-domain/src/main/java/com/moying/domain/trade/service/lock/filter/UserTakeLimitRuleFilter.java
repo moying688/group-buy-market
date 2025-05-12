@@ -2,9 +2,9 @@ package com.moying.domain.trade.service.lock.filter;
 
 import com.moying.domain.trade.adapter.repository.ITradeRepository;
 import com.moying.domain.trade.model.entity.GroupBuyActivityEntity;
-import com.moying.domain.trade.model.entity.TradeRuleCommandEntity;
-import com.moying.domain.trade.model.entity.TradeRuleFilterBackEntity;
-import com.moying.domain.trade.service.lock.factory.TradeRuleFilterFactory;
+import com.moying.domain.trade.model.entity.TradeLockRuleCommandEntity;
+import com.moying.domain.trade.model.entity.TradeLockRuleFilterBackEntity;
+import com.moying.domain.trade.service.lock.factory.TradeLockRuleFilterFactory;
 import com.moying.types.design.framework.link.model2.handler.ILogicHandler;
 import com.moying.types.enums.ResponseCode;
 import com.moying.types.exception.AppException;
@@ -23,14 +23,14 @@ import javax.annotation.Resource;
 @Service
 @Slf4j
 public class UserTakeLimitRuleFilter  implements
-        ILogicHandler<TradeRuleCommandEntity, TradeRuleFilterFactory.DynamicContext, TradeRuleFilterBackEntity> {
+        ILogicHandler<TradeLockRuleCommandEntity, TradeLockRuleFilterFactory.DynamicContext, TradeLockRuleFilterBackEntity> {
 
     @Resource
     private ITradeRepository tradeRepository;
 
 
     @Override
-    public TradeRuleFilterBackEntity apply(TradeRuleCommandEntity requestParameter, TradeRuleFilterFactory.DynamicContext dynamicContext) throws Exception {
+    public TradeLockRuleFilterBackEntity apply(TradeLockRuleCommandEntity requestParameter, TradeLockRuleFilterFactory.DynamicContext dynamicContext) throws Exception {
         // 用户参与次数校验等
         log.info("交易规则过滤-用户参与次数校验{} activityId:{}", requestParameter.getUserId(), requestParameter.getActivityId());
 
@@ -45,7 +45,7 @@ public class UserTakeLimitRuleFilter  implements
         }
 
 
-        return TradeRuleFilterBackEntity.builder()
+        return TradeLockRuleFilterBackEntity.builder()
                 .userTakeOrderCount(userTakeCount)
                 .build();
     }

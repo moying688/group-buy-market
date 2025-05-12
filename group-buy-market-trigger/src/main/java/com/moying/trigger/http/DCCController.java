@@ -32,6 +32,7 @@ public class DCCController implements IDCCService {
      * <p>
      * curl http://127.0.0.1:8091/api/v1/gbm/dcc/update_config?key=downgradeSwitch&value=1
      * curl http://127.0.0.1:8091/api/v1/gbm/dcc/update_config?key=cutRange&value=0
+     * curl http://127.0.0.1:8091/api/v1/gbm/dcc/update_config?key=scBlacklist&value=s01c01
      */
     @RequestMapping(value = "update_config", method = RequestMethod.GET)
     @Override

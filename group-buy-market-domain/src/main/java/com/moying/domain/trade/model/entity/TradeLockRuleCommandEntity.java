@@ -4,19 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.checkerframework.checker.units.qual.A;
 
 /**
  * @Author: moying
  * @CreateTime: 2025-05-11
- * @Description:
+ * @Description: 拼团锁单命令实体
  */
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TradeRuleCommandEntity {
+public class TradeLockRuleCommandEntity {
     // 用户 id
     private String userId;
     // 活动id

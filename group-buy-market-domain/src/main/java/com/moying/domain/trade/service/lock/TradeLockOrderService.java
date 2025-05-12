@@ -5,7 +5,7 @@ import com.moying.domain.trade.model.aggregate.GroupBuyOrderAggregate;
 import com.moying.domain.trade.model.entity.*;
 import com.moying.domain.trade.model.valobj.GroupBuyProgressVO;
 import com.moying.domain.trade.service.ITradeLockOrderService;
-import com.moying.domain.trade.service.lock.factory.TradeRuleFilterFactory;
+import com.moying.domain.trade.service.lock.factory.TradeLockRuleFilterFactory;
 import com.moying.types.design.framework.link.model2.chain.BusinessLinkedList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,8 @@ public class TradeLockOrderService implements ITradeLockOrderService {
     private ITradeRepository tradeRepository;
 
     @Resource
-    private BusinessLinkedList<TradeRuleCommandEntity, TradeRuleFilterFactory.DynamicContext, TradeRuleFilterBackEntity> tradeRuleFilter;
+    private BusinessLinkedList<TradeLockRuleCommandEntity,
+            TradeLockRuleFilterFactory.DynamicContext, TradeLockRuleFilterBackEntity> tradeRuleFilter;
 
     @Override
     public MarketPayOrderEntity queryNoPayMarketPayOrderByOutTradeNo(String userId, String outTradeNo) {
@@ -46,10 +47,10 @@ public class TradeLockOrderService implements ITradeLockOrderService {
         log.info("拼团交易-锁定营销优惠支付订单:{} activityId:{} goodsId:{}", userEntity.getUserId(), payActivityEntity.getActivityId(), payDiscountEntity.getGoodsId());
 
         // 校验用户是否还可以参与活动
-        TradeRuleFilterBackEntity tradeRuleFilterBackEntity = tradeRuleFilter.apply(TradeRuleCommandEntity.builder()
+        TradeLockRuleFilterBackEntity tradeLockRuleFilterBackEntity = tradeRuleFilter.apply(TradeLockRuleCommandEntity.builder()
                 .activityId(payActivityEntity.getActivityId())
                 .userId(userEntity.getUserId())
-                .build(), new TradeRuleFilterFactory.DynamicContext());
+                .build(), new TradeLockRuleFilterFactory.DynamicContext());
 
 
         // 构建聚合对象
@@ -57,7 +58,7 @@ public class TradeLockOrderService implements ITradeLockOrderService {
                 .userEntity(userEntity)
                 .payActivityEntity(payActivityEntity)
                 .payDiscountEntity(payDiscountEntity)
-                .userTakeOrderCount(tradeRuleFilterBackEntity.getUserTakeOrderCount())
+                .userTakeOrderCount(tradeLockRuleFilterBackEntity.getUserTakeOrderCount())
                 .build();
 
         // 锁定营销支付订单 - 这会用户只是下单还没有支付。后续会有2个流程；支付成功、超时未支付（回退）

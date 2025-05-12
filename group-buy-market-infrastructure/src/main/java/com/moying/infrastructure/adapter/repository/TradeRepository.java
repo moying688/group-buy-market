@@ -15,6 +15,7 @@ import com.moying.infrastructure.dao.po.GroupBuyActivity;
 import com.moying.infrastructure.dao.po.GroupBuyOrder;
 import com.moying.infrastructure.dao.po.GroupBuyOrderList;
 import com.moying.infrastructure.dao.po.NotifyTask;
+import com.moying.infrastructure.dcc.DCCService;
 import com.moying.types.common.Constants;
 import com.moying.types.enums.ActivityStatusEnumVO;
 import com.moying.types.enums.GroupBuyOrderEnumVO;
@@ -27,9 +28,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @Author: moying
@@ -51,6 +50,9 @@ public class TradeRepository implements ITradeRepository {
 
     @Resource
     private INotifyTaskDao notifyTaskDao;
+
+    @Resource
+    private DCCService dccService;
 
     @Override
     public MarketPayOrderEntity queryMarketPayOrderEntityByOutTradeNo(String userId, String outTradeNo) {
@@ -83,6 +85,16 @@ public class TradeRepository implements ITradeRepository {
         if (StringUtils.isBlank(teamId)) {
             teamId = RandomStringUtils.randomNumeric(8);
 
+
+            // 日期处理
+            Date currentDate = new Date();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(currentDate);
+            calendar.add(Calendar.MINUTE, payActivityEntity.getValidTime());
+//            // 直接在毫秒上加分钟
+//            long offsetMillis = TimeUnit.MINUTES.toMillis(payActivityEntity.getValidTime());
+//            Date newDate = new Date(currentDate.getTime() + offsetMillis);
+
             // 构建拼团订单
             GroupBuyOrder groupBuyOrder = GroupBuyOrder.builder()
                     .teamId(teamId)
@@ -93,6 +105,8 @@ public class TradeRepository implements ITradeRepository {
                     .deductionPrice(payDiscountEntity.getDeductionPrice())
                     .payPrice(payDiscountEntity.getPayPrice())
                     .targetCount(payActivityEntity.getTargetCount())
+                    .validStartTime(currentDate)
+                    .validEndTime(calendar.getTime())
                     .completeCount(0)
                     .lockCount(1)
                     .build();
@@ -190,6 +204,8 @@ public class TradeRepository implements ITradeRepository {
                 .completeCount(groupBuyOrder.getCompleteCount())
                 .lockCount(groupBuyOrder.getLockCount())
                 .status(GroupBuyOrderEnumVO.valueOf(groupBuyOrder.getStatus()))
+                .validStartTime(groupBuyOrder.getValidStartTime())
+                .validEndTime(groupBuyOrder.getValidEndTime())
                 .build();
     }
 
@@ -205,6 +221,7 @@ public class TradeRepository implements ITradeRepository {
         GroupBuyOrderList groupBuyOrderList = new GroupBuyOrderList();
         groupBuyOrderList.setUserId(userEntity.getUserId());
         groupBuyOrderList.setOutTradeNo(tradePaySuccessEntity.getOutTradeNo());
+        groupBuyOrderList.setOutTradeTime(new Date());
        int updateOrderListStatusCount =  groupBuyOrderListDao.updateOrderStatusToCOMPLETE(groupBuyOrderList);
 
        if(1!= updateOrderListStatusCount){
@@ -241,5 +258,10 @@ public class TradeRepository implements ITradeRepository {
             notifyTaskDao.insert(notifyTask);
 
         }
+    }
+
+    @Override
+    public boolean isSCBlackIntercept(String source, String channel) {
+        return dccService.isSCBlackIntercept(source, channel);
     }
 }

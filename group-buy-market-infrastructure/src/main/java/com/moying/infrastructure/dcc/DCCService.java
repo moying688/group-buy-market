@@ -1,7 +1,11 @@
 package com.moying.infrastructure.dcc;
 
 import com.moying.types.annotations.DCCValue;
+import com.moying.types.common.Constants;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Author: moying
@@ -20,6 +24,10 @@ public class DCCService {
     @DCCValue("cutRange:100")
     private  String cutRange;
 
+    @DCCValue("scBlacklist:s02c02")
+    private String scBlacklist;
+
+
     public boolean isDowngradeSwitch() {
         return "1".equals(downgradeSwitch);
     }
@@ -33,5 +41,12 @@ public class DCCService {
             return true;
         }
         return false;
+    }
+
+    public boolean isSCBlackIntercept(String source, String channel) {
+
+        // todo controller 更新貌似有点问题 value为空时不会更新为空字符串
+        List<String> list = Arrays.asList(scBlacklist.split(Constants.SPLIT));
+        return list.contains(source + channel);
     }
 }

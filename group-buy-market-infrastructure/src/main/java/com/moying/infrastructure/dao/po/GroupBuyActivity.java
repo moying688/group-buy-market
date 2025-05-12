@@ -44,6 +44,7 @@ public class GroupBuyActivity {
     private String tagId;
     /** 人群标签规则范围 */
     private String tagScope;
+
     /** 创建时间 */
     private Date createTime;
     /** 更新时间 */

@@ -1,8 +1,8 @@
 package com.moying.domain.trade.service.lock.factory;
 
 import com.moying.domain.trade.model.entity.GroupBuyActivityEntity;
-import com.moying.domain.trade.model.entity.TradeRuleCommandEntity;
-import com.moying.domain.trade.model.entity.TradeRuleFilterBackEntity;
+import com.moying.domain.trade.model.entity.TradeLockRuleCommandEntity;
+import com.moying.domain.trade.model.entity.TradeLockRuleFilterBackEntity;
 import com.moying.domain.trade.service.lock.filter.ActivityUsabilityRuleFilter;
 import com.moying.domain.trade.service.lock.filter.UserTakeLimitRuleFilter;
 import com.moying.types.design.framework.link.model2.LinkArmory;
@@ -22,15 +22,15 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class TradeRuleFilterFactory {
+public class TradeLockRuleFilterFactory {
 
 
 
     @Bean("tradeRuleFilter")
-    public BusinessLinkedList<TradeRuleCommandEntity, TradeRuleFilterFactory.DynamicContext, TradeRuleFilterBackEntity>
+    public BusinessLinkedList<TradeLockRuleCommandEntity, TradeLockRuleFilterFactory.DynamicContext, TradeLockRuleFilterBackEntity>
         tradeRuleFilter(ActivityUsabilityRuleFilter activityUsabilityRuleFilter, UserTakeLimitRuleFilter userTakeLimitRuleFilter){
         // 组装链
-        LinkArmory<TradeRuleCommandEntity, TradeRuleFilterFactory.DynamicContext, TradeRuleFilterBackEntity>
+        LinkArmory<TradeLockRuleCommandEntity, TradeLockRuleFilterFactory.DynamicContext, TradeLockRuleFilterBackEntity>
                 linkArmory = new LinkArmory<>("交易规则过滤链", activityUsabilityRuleFilter, userTakeLimitRuleFilter);
         return linkArmory.getLogicLink();
     }

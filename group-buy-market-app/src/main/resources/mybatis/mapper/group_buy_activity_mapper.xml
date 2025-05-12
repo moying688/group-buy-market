@@ -16,6 +16,7 @@
         <result column="end_time" property="endTime"/>
         <result column="tag_id" property="tagId"/>
         <result column="tag_scope" property="tagScope"/>
+
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
 
