@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="UploadStorage">
+    <option name="envList">
+      <list>
+        <EnvDTO>
+          <option name="env" value="拼团项目" />
+          <option name="urlMap">
+            <map>
+              <entry key="group-buy-market-trigger" value="http://127.0.0.1:8091/" />
+            </map>
+          </option>
+        </EnvDTO>
+      </list>
+    </option>
+  </component>
+</project>

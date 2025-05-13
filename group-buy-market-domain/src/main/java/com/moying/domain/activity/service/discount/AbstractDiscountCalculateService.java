@@ -40,7 +40,6 @@ public abstract class AbstractDiscountCalculateService implements IDiscountCalcu
 
     // 人群标签过滤 - 限定人群优惠
     private  boolean filterTagId(String userId,String tagId){
-        // todo 后续开发
         activityRepository.isTagCrowdRange(tagId,userId);
         return true;
     }

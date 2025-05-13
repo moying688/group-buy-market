@@ -1,11 +1,17 @@
 package com.moying.api.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @description 营销支付锁单请求对象
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class LockMarketPayOrderRequestDTO {
 
     // 用户ID
@@ -22,5 +28,7 @@ public class LockMarketPayOrderRequestDTO {
     private String channel;
     // 外部交易单号
     private String outTradeNo;
+    /** 回调地址 */
+    private String notifyUrl;
 
 }
