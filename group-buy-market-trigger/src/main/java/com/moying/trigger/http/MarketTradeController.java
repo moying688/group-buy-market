@@ -43,6 +43,9 @@ public class MarketTradeController implements IMarketTradeService {
     @Resource
     private ITradeSettlementOrderService tradeSettlementOrderService;
 
+    // todo 加入取消锁单接口,
+    // 若点击拼团
+
     /**
      * 拼团营销锁单
      */

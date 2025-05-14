@@ -150,7 +150,7 @@ public class ActivityRepository implements IActivityRepository {
         groupBuyOrderListReq.setUserId(userId);
         groupBuyOrderListReq.setActivityId(activityId);
         groupBuyOrderListReq.setCount(randomCount * 2);// 查询2倍的量，之后其中 randomCount 数量 会被过滤掉
-        List<GroupBuyOrderList> groupBuyOrderLists = groupBuyOrderListDao.queryInProgressUserGroupBuyOrderDetailListByUserId(groupBuyOrderListReq);
+        List<GroupBuyOrderList> groupBuyOrderLists = groupBuyOrderListDao.queryInProgressUserGroupBuyOrderDetailListByRandom(groupBuyOrderListReq);
 
         if (null == groupBuyOrderLists || groupBuyOrderLists.isEmpty()) return null;
 
