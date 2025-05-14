@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 /**
  * @Author: moying
  * @CreateTime: 2025-05-07
- * @Description:
+ * @Description: 交易订单状态枚举
  */
 
 @Getter

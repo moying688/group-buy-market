@@ -1,24 +1,19 @@
 package com.moying.infrastructure.adapter.repository;
 
 import com.moying.domain.activity.adapter.repository.IActivityRepository;
-import com.moying.domain.activity.model.valobj.DiscountTypeEnum;
-import com.moying.domain.activity.model.valobj.GroupBuyActivityDiscountVO;
-import com.moying.domain.activity.model.valobj.SCSkuActivityVO;
-import com.moying.domain.activity.model.valobj.SkuVO;
-import com.moying.infrastructure.dao.IGroupBuyActivityDao;
-import com.moying.infrastructure.dao.IGroupBuyDiscountDao;
-import com.moying.infrastructure.dao.ISCSkuActivityDao;
-import com.moying.infrastructure.dao.ISkuDao;
-import com.moying.infrastructure.dao.po.GroupBuyActivity;
-import com.moying.infrastructure.dao.po.GroupBuyDiscount;
-import com.moying.infrastructure.dao.po.SCSkuActivity;
-import com.moying.infrastructure.dao.po.Sku;
+import com.moying.domain.activity.model.entity.UserGroupBuyOrderDetailEntity;
+import com.moying.domain.activity.model.valobj.*;
+import com.moying.infrastructure.dao.*;
+import com.moying.infrastructure.dao.po.*;
 import com.moying.infrastructure.dcc.DCCService;
 import com.moying.infrastructure.redis.IRedisService;
+import org.jetbrains.annotations.Nullable;
 import org.redisson.api.RBitSet;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author: moying
@@ -34,6 +29,12 @@ public class ActivityRepository implements IActivityRepository {
     private IGroupBuyActivityDao groupBuyActivityDao;
     @Resource
     private IGroupBuyDiscountDao groupBuyDiscountDao;
+    @Resource
+    private IGroupBuyOrderListDao groupBuyOrderListDao;
+
+    @Resource
+    private IGroupBuyOrderDao groupBuyOrderDao;
+
     @Resource
     private ISkuDao skuDao;
     @Resource
@@ -126,5 +127,107 @@ public class ActivityRepository implements IActivityRepository {
     @Override
     public boolean cutRange(String userId) {
         return dccService.isCutRange(userId);
+    }
+
+    @Override
+    public List<UserGroupBuyOrderDetailEntity> queryInProgressUserGroupBuyOrderDetailListByOwner(Long activityId, String userId, Integer ownerCount) {
+       // 1. 根据用户Id、活动id查询用户参与的拼团队伍
+        GroupBuyOrderList groupBuyOrderListReq = new GroupBuyOrderList();
+        groupBuyOrderListReq.setUserId(userId);
+        groupBuyOrderListReq.setActivityId(activityId);
+        groupBuyOrderListReq.setCount(ownerCount);
+        List<GroupBuyOrderList> groupBuyOrderLists = groupBuyOrderListDao.queryInProgressUserGroupBuyOrderDetailListByUserId(groupBuyOrderListReq);
+
+        if (null == groupBuyOrderLists || groupBuyOrderLists.isEmpty()) return null;
+
+        return getUserGroupBuyOrderDetailEntities(groupBuyOrderLists);
+    }
+
+    @Override
+    public List<UserGroupBuyOrderDetailEntity> queryInProgressUserGroupBuyOrderDetailListByRandom(Long activityId, String userId, Integer randomCount) {
+        // 1. 根据用户Id、活动Id查询用户参与的拼团队伍
+        GroupBuyOrderList groupBuyOrderListReq = new GroupBuyOrderList();
+        groupBuyOrderListReq.setUserId(userId);
+        groupBuyOrderListReq.setActivityId(activityId);
+        groupBuyOrderListReq.setCount(randomCount * 2);// 查询2倍的量，之后其中 randomCount 数量 会被过滤掉
+        List<GroupBuyOrderList> groupBuyOrderLists = groupBuyOrderListDao.queryInProgressUserGroupBuyOrderDetailListByUserId(groupBuyOrderListReq);
+
+        if (null == groupBuyOrderLists || groupBuyOrderLists.isEmpty()) return null;
+
+        // 判断总量是否大于RandomCount
+        if (groupBuyOrderLists.size() > randomCount) {
+            // 随机打乱列表
+            Collections.shuffle(groupBuyOrderLists);
+            // 获取前 randomCount 个元素
+            groupBuyOrderLists = groupBuyOrderLists.subList(0, randomCount);
+        }
+
+        return getUserGroupBuyOrderDetailEntities(groupBuyOrderLists);
+    }
+
+    @Override
+    public TeamStatisticVO queryTeamStatisticByActivityId(Long activityId) {
+        // 1. 根据活动ID查询拼团队伍
+        List<GroupBuyOrderList> groupBuyOrderLists = groupBuyOrderListDao.queryInProgressUserGroupBuyOrderDetailListByActivityId(activityId);
+        if (null == groupBuyOrderLists || groupBuyOrderLists.isEmpty()) {
+            return new TeamStatisticVO(0, 0, 0);
+        }
+
+        // 2. 过滤队伍获取 teamId
+        Set<String> teamIds = groupBuyOrderLists.stream()
+              .map(GroupBuyOrderList::getTeamId)
+              .filter(teamId -> teamId!= null &&!teamId.isEmpty()) // 过滤非空和非空字符串
+              .collect(Collectors.toSet());
+
+        // 3. 统计数据
+        Integer allTeamCount = groupBuyOrderDao.queryAllTeamCount(teamIds);
+        Integer allTeamCompleteCount = groupBuyOrderDao.queryAllTeamCompleteCount(teamIds);
+        Integer allTeamUserCount = groupBuyOrderDao.queryAllUserCount(teamIds);
+
+        // 4. 构建对象
+        return TeamStatisticVO.builder()
+                .allTeamCount(allTeamCount)
+                .allTeamCompleteCount(allTeamCompleteCount)
+                .allTeamUserCount(allTeamUserCount)
+                .build();
+    }
+
+    @Nullable
+    private List<UserGroupBuyOrderDetailEntity> getUserGroupBuyOrderDetailEntities(List<GroupBuyOrderList> groupBuyOrderLists) {
+        // 2. 过滤队伍获取 teamId
+        Set<String> teamIds = groupBuyOrderLists.stream()
+               .map(GroupBuyOrderList::getTeamId)
+               .filter(teamId -> teamId != null && !teamId.isEmpty()) // 过滤非空和非空字符串
+               .collect(Collectors.toSet());
+
+        // 3. 查询队伍明细，组装Map结构
+        List<GroupBuyOrder> groupBuyOrders = groupBuyOrderDao.queryGroupBuyProgressByTeamIds(teamIds);
+        if (null == groupBuyOrders || groupBuyOrders.isEmpty()) return null;
+
+        Map<String, GroupBuyOrder> groupBuyOrderMap = groupBuyOrders.stream()
+                .collect(Collectors.toMap(GroupBuyOrder::getTeamId, order -> order));
+
+        // 4. 转换数据
+        List<UserGroupBuyOrderDetailEntity> userGroupBuyOrderDetailEntities = new ArrayList<>();
+        for (GroupBuyOrderList groupBuyOrderList : groupBuyOrderLists) {
+            String teamId = groupBuyOrderList.getTeamId();
+            GroupBuyOrder groupBuyOrder = groupBuyOrderMap.get(teamId);
+            if (null == groupBuyOrder) continue;
+
+            UserGroupBuyOrderDetailEntity userGroupBuyOrderDetailEntity = UserGroupBuyOrderDetailEntity.builder()
+                    .userId(groupBuyOrderList.getUserId())
+                    .teamId(groupBuyOrder.getTeamId())
+                    .activityId(groupBuyOrder.getActivityId())
+                    .targetCount(groupBuyOrder.getTargetCount())
+                    .completeCount(groupBuyOrder.getCompleteCount())
+                    .lockCount(groupBuyOrder.getLockCount())
+                    .validStartTime(groupBuyOrder.getValidStartTime())
+                    .validEndTime(groupBuyOrder.getValidEndTime())
+                    .build();
+
+            userGroupBuyOrderDetailEntities.add(userGroupBuyOrderDetailEntity);
+        }
+
+        return userGroupBuyOrderDetailEntities;
     }
 }

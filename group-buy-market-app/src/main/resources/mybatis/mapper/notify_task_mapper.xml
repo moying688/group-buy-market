@@ -43,10 +43,13 @@
     </update>
 
     <select id="queryUnExecutedNotifyTaskList" resultMap="dataMap">
+        <![CDATA[
         select activity_id, team_id, notify_url, notify_count, notify_status, parameter_json
         from notify_task
         where notify_status in (0, 2)
+          and notify_count < 5
         limit 50
+        ]]>
     </select>
     <select id="queryUnExecutedNotifyTaskByTeamId" resultMap="dataMap"
             parameterType="java.lang.String">

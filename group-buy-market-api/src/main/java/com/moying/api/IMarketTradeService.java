@@ -2,6 +2,8 @@ package com.moying.api;
 
 import com.moying.api.dto.LockMarketPayOrderRequestDTO;
 import com.moying.api.dto.LockMarketPayOrderResponseDTO;
+import com.moying.api.dto.SettlementMarketPayOrderRequestDTO;
+import com.moying.api.dto.SettlementMarketPayOrderResponseDTO;
 import com.moying.api.response.Response;
 
 /**
@@ -13,4 +15,5 @@ import com.moying.api.response.Response;
 public interface IMarketTradeService {
     Response<LockMarketPayOrderResponseDTO> lockMarketPayOrder(LockMarketPayOrderRequestDTO lockMarketPayOrderRequestDTO);
 
+    Response<SettlementMarketPayOrderResponseDTO> settlementMarketPayOrder(SettlementMarketPayOrderRequestDTO requestDTO);
 }
