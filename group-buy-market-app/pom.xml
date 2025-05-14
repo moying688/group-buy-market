@@ -101,7 +101,7 @@
     </dependencies>
 
     <build>
-        <finalName>group-buy-market-test-app</finalName>
+        <finalName>group-buy-market-app</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>

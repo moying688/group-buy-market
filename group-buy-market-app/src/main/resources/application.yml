@@ -1,5 +1,5 @@
 spring:
   config:
-    name: group-buy-market-test-app
+    name: group-buy-market-app
   profiles:
     active: prod
