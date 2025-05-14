@@ -12,11 +12,11 @@ services:
       - ./nginx/html:/usr/share/nginx/html
     privileged: true
   # 部署后端项目
-  # 原镜像，需要自己构建；moying/group-buy-market-app:1.0
-  # 代理镜像（打包好的，可以直接使用）； registry.cn-hangzhou.aliyuncs.com/xfg-studio/group-buy-market-app:1.3
+#   原镜像，需要自己构建；moying/group-buy-market-app:1.0
+#   代理镜像（打包好的，可以直接使用）； registry.cn-hangzhou.aliyuncs.com/xfg-studio/group-buy-market-app:1.3
   group-buy-market:
-    image: registry.cn-hangzhou.aliyuncs.com/xfg-studio/group-buy-market-app:1.3
-#    image: moying/group-buy-market-app:1.0
+#    image: registry.cn-hangzhou.aliyuncs.com/xfg-studio/group-buy-market-app:1.3
+    image: moying/group-buy-market-app:1.0
     container_name: group-buy-market-app
     restart: on-failure
     ports:
@@ -25,7 +25,7 @@ services:
       - TZ=PRC
       - SERVER_PORT=8091
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=123456
+      - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/group_buy_market?serverTimezone=UTC&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Shanghai
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
       - SPRING_HIKARI_POOL_NAME=Retail_HikariCP
