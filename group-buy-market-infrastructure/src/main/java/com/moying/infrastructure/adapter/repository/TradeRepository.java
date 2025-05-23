@@ -67,6 +67,8 @@ public class TradeRepository implements ITradeRepository {
                 .teamId(groupBuyOrderList.getTeamId())
                 .orderId(groupBuyOrderList.getOrderId())
                 .deductionPrice(groupBuyOrderList.getDeductionPrice())
+                .payPrice(groupBuyOrderList.getPayPrice())
+                .originalPrice(groupBuyOrderList.getOriginalPrice())
                 .tradeOrderStatusEnumVO(TradeOrderStatusEnumVO.valueOf(groupBuyOrderList.getStatus()))
                 .build();
     }
@@ -136,6 +138,7 @@ public class TradeRepository implements ITradeRepository {
                 .channel(payDiscountEntity.getChannel())
                 .originalPrice(payDiscountEntity.getOriginalPrice())
                 .deductionPrice(payDiscountEntity.getDeductionPrice())
+                .payPrice(payDiscountEntity.getPayPrice())
                 .status(TradeOrderStatusEnumVO.CREATE.getCode())
                 .outTradeNo(payDiscountEntity.getOutTradeNo())
                 // 构建 bizId 唯一值；活动id_用户id_参与次数累加
@@ -152,6 +155,8 @@ public class TradeRepository implements ITradeRepository {
         return MarketPayOrderEntity.builder()
                 .orderId(orderId)
                 .deductionPrice(groupBuyOrderList.getDeductionPrice())
+                .payPrice(groupBuyOrderList.getPayPrice())
+                .originalPrice(groupBuyOrderList.getDeductionPrice())
                 .tradeOrderStatusEnumVO(TradeOrderStatusEnumVO.CREATE)
                 .build();
     }

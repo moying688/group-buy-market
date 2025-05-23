@@ -10,7 +10,7 @@ import java.util.Date;
 /**
  * @Author: moying
  * @CreateTime: 2025-05-13
- * @Description:
+ * @Description: 用户拼单组队订单详情实体类
  */
 
 
