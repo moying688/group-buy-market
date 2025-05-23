@@ -98,5 +98,12 @@
         where activity_id = #{activityId}
           and status in (0, 1)
     </select>
+    <select id="queryGroupBuyTeamByUserIdAndTeamId" resultType="java.lang.Integer">
+        select count(id)
+        from group_buy_order_list
+        where user_id = #{userId}
+          and team_id = #{teamId}
+          and status in (0, 1)
+    </select>
 
 </mapper>

@@ -317,4 +317,10 @@ public class TradeRepository implements ITradeRepository {
     public int updateNotifyTaskStatusRetry(String teamId) {
         return  notifyTaskDao.updateNotifyTaskStatusRetry(teamId);
     }
+
+    @Override
+    public boolean queryGroupBuyTeamByUserIdAndTeamId(String userId, String teamId) {
+       int count = groupBuyOrderListDao.queryGroupBuyTeamByUserIdAndTeamId(userId, teamId);
+        return count > 0;
+    }
 }

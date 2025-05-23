@@ -54,4 +54,6 @@ public interface ITradeRepository {
     int updateNotifyTaskStatusError(String teamId);
 
     int updateNotifyTaskStatusRetry(String teamId);
+
+    boolean queryGroupBuyTeamByUserIdAndTeamId(String userId, String teamId);
 }

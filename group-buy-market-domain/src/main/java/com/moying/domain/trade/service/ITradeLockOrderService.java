@@ -44,5 +44,5 @@ public interface ITradeLockOrderService {
     MarketPayOrderEntity lockMarketPayOrder(UserEntity userEntity, PayActivityEntity payActivityEntity, PayDiscountEntity payDiscountEntity) throws Exception;
 
 
-
+    boolean queryGroupBuyTeamByUserIdAndTeamId(String userId, String teamId);
 }

@@ -96,6 +96,16 @@ public class MarketTradeController implements IMarketTradeService {
 
             // 查看是否存在该拼团
             if (null != teamId) {
+                // 如果已经在该团队中锁单了，直接返回
+                boolean isIn = tradeOrderService.queryGroupBuyTeamByUserIdAndTeamId(userId, teamId);
+                if (isIn) {
+                    log.info("交易锁单拦截-用户已经在该拼团中:{} {}", userId, teamId);
+                    return Response.<LockMarketPayOrderResponseDTO>builder()
+                            .code(ResponseCode.E0008.getCode())
+                            .info(ResponseCode.E0008.getInfo())
+                            .build();
+                }
+
                 // 判断拼团锁单是否完成了目标
                 GroupBuyProgressVO groupBuyProgressVO = tradeOrderService.queryGroupBuyProgress(teamId);
                 if (null != groupBuyProgressVO && groupBuyProgressVO.getTargetCount().equals(groupBuyProgressVO.getLockCount())) {
@@ -126,6 +136,8 @@ public class MarketTradeController implements IMarketTradeService {
                         .build();
             }
             GroupBuyActivityDiscountVO groupBuyActivityDiscountVO = trialBalanceEntity.getGroupBuyActivityDiscountVO();
+
+
 
 
             // 锁单

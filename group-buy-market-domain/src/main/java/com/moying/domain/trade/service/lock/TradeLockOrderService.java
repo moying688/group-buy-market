@@ -64,4 +64,9 @@ public class TradeLockOrderService implements ITradeLockOrderService {
         // 锁定营销支付订单 - 这会用户只是下单还没有支付。后续会有2个流程；支付成功、超时未支付（回退）
         return tradeRepository.lockMarketPayOrder(groupBuyOrderAggregate);
     }
+
+    @Override
+    public boolean queryGroupBuyTeamByUserIdAndTeamId(String userId, String teamId) {
+        return tradeRepository.queryGroupBuyTeamByUserIdAndTeamId(userId, teamId);
+    }
 }
