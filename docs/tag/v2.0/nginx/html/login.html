@@ -115,7 +115,7 @@
         <img id="qr-code-img" src="images/placeholder.png" alt="微信二维码" class="pulse">
     </div>
     <p class="instructions">请使用微信扫描二维码登录<br>扫码后自动登录商城</p>
-    <button id="stealth-login-btn" class="stealth-login-btn">无痕登录（浏览器指纹）</button>
+<!--    <button id="stealth-login-btn" class="stealth-login-btn">无痕登录（浏览器指纹）</button>-->
 </div>
 
 <script>
@@ -132,14 +132,14 @@
             .then(result => {
                 const visitorId = result.visitorId;
 
-                // 无痕登录按钮点击事件
-                const stealthLoginBtn = document.getElementById('stealth-login-btn');
-                stealthLoginBtn.addEventListener('click', () => {
-                    // 将浏览器指纹 ID 作为 Cookie 值写入浏览器
-                    setCookie('loginToken', visitorId, 30);
-                    // 重定向到登录后的页面
-                    window.location.href = 'index.html';
-                });
+                // // 无痕登录按钮点击事件
+                // const stealthLoginBtn = document.getElementById('stealth-login-btn');
+                // stealthLoginBtn.addEventListener('click', () => {
+                //     // 将浏览器指纹 ID 作为 Cookie 值写入浏览器
+                //     setCookie('loginToken', visitorId, 30);
+                //     // 重定向到登录后的页面
+                //     window.location.href = 'index.html';
+                // });
 
                 // 获取场景值
                 let sceneStr = visitorId.toUpperCase();
