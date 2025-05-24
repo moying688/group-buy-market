@@ -1,5 +1,5 @@
 version: '3.8'
-# docker-compose -f docker-compose-app-v1.0.yml up -d
+# docker-compose -f docker-compose-app-v2.0.yml up -d
 services:
   # 部署前端项目
   nginx:
