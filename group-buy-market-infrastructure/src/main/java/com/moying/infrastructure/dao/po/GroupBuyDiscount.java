@@ -23,7 +23,7 @@ public class GroupBuyDiscount {
     private Long id;
 
     /** 折扣ID */
-    private Integer discountId;
+    private String discountId;
 
     /** 折扣标题 */
     private String discountName;
@@ -48,4 +48,13 @@ public class GroupBuyDiscount {
 
     /** 更新时间 */
     private Date updateTime;
+
+    /**
+     * Redis缓存Key生成方法
+     * @param discountId 折扣ID
+     * @return 缓存Key
+     */
+    public static String cacheRedisKey(String discountId) {
+        return "group_buy_market_com.moying.infrastructure.dao.po.GroupBuyDiscount_" + discountId;
+    }
 }

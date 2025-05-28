@@ -49,4 +49,15 @@ public class GroupBuyActivity {
     private Date createTime;
     /** 更新时间 */
     private Date updateTime;
+
+    /**
+     * Redis缓存Key生成方法
+     * @param activityId 活动ID
+     * @return 缓存Key
+     */
+    public static String cacheRedisKey(Long activityId) {
+        return "group_buy_market_com.moying.infrastructure.dao.po.GroupBuyActivity_" + activityId;
+    }
+
+
 }

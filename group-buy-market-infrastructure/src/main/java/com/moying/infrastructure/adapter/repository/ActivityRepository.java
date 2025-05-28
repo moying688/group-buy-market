@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 
 @Repository
-public class ActivityRepository implements IActivityRepository {
+public class ActivityRepository extends AbstractRepository implements IActivityRepository {
 
     @Resource
     private IGroupBuyActivityDao groupBuyActivityDao;
@@ -48,14 +48,15 @@ public class ActivityRepository implements IActivityRepository {
 
     @Override
     public GroupBuyActivityDiscountVO queryGroupBuyActivityDiscountVO(Long activityId) {
-        // 构建查询条件  根据SC渠道值查询配置中最新的1个有效的活动
-
-        GroupBuyActivity groupBuyActivityRes = groupBuyActivityDao.queryValidGroupBuyActivityId(activityId);
+        // 优先从缓存获取&写缓存  todo 后续如果通过后台更新活动信息，需要删除缓存
+        GroupBuyActivity groupBuyActivityRes = getFromCacheOrDB(GroupBuyActivity.cacheRedisKey(activityId),
+                ()->groupBuyActivityDao.queryValidGroupBuyActivityId(activityId));
         if (null == groupBuyActivityRes) return null;
 
-        // 根据活动ID查询活动折扣信息
+        // 根据活动ID查询活动折扣信息 todo 后续如果通过后台更新活动信息，需要删除缓存
         String discountId = groupBuyActivityRes.getDiscountId();
-        GroupBuyDiscount groupBuyDiscountRes = groupBuyDiscountDao.queryGroupBuyDiscountByDiscountId(discountId);
+        GroupBuyDiscount groupBuyDiscountRes = getFromCacheOrDB(GroupBuyDiscount.cacheRedisKey(discountId),
+                ()->groupBuyDiscountDao.queryGroupBuyDiscountByDiscountId(discountId));
 
         if (null == groupBuyDiscountRes) return null;
 
