@@ -14,9 +14,9 @@ services:
       - ./nginx/conf/conf.d:/etc/nginx/conf.d
     privileged: true
   # 部署后端项目 - 小型支付商城
-  s-pay-mall-app:
+  moying-pay-mall-app:
     image: moying/moying-pay-mall-app:2.0
-    container_name: s-pay-mall-app
+    container_name: moying-pay-mall-app
     restart: on-failure
     ports:
       - "9091:8080"
