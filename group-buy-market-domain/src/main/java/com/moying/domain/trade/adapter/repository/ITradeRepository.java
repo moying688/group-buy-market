@@ -42,7 +42,7 @@ public interface ITradeRepository {
     GroupBuyTeamEntity queryGroupBuyTeamByTeamId(String teamId);
 
     // 结算拼团订单
-    boolean settlementMarketPayOrder(GroupBuyTeamSettlementAggregate groupBuyTeamSettlementAggregate);
+    NotifyTaskEntity settlementMarketPayOrder(GroupBuyTeamSettlementAggregate groupBuyTeamSettlementAggregate);
 
     boolean isSCBlackIntercept(String source, String channel);
 

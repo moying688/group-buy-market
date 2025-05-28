@@ -1,6 +1,14 @@
 - 调研退单
 - 补充已经进入团队后，按钮变化以及提示（前端）
 
+## 测试
+```bash
+# 启动RocketMQ
+start mqnamesrv.cmd
+start mqbroker.cmd -n 127.0.0.1:9876 -c ../conf/broker.conf
+
+
+```
 
 ## 部署
 1. 拉取代码

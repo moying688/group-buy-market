@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.concurrent.CountDownLatch;
 
 @Slf4j
 @RunWith(SpringRunner.class)
@@ -23,15 +24,18 @@ public class TradeSettlementOrderServiceTest {
 
     @Test
     public void test_settlementMarketPayOrder() throws Exception {
-        TradePaySuccessEntity tradePaySuccessEntity = new TradePaySuccessEntity();
-        tradePaySuccessEntity.setSource("s01");
-        tradePaySuccessEntity.setChannel("c01");
-        tradePaySuccessEntity.setUserId("moying01");
-        tradePaySuccessEntity.setOutTradeNo("021177741121");
-        tradePaySuccessEntity.setOutTradeTime(new Date());
-        TradePaySettlementEntity tradePaySettlementEntity = tradeSettlementOrderService.settlementMarketPayOrder(tradePaySuccessEntity);
-        log.info("请求参数:{}", JSON.toJSONString(tradePaySuccessEntity));
-        log.info("测试结果:{}", JSON.toJSONString(tradePaySettlementEntity));
+//        TradePaySuccessEntity tradePaySuccessEntity = new TradePaySuccessEntity();
+//        tradePaySuccessEntity.setSource("s01");
+//        tradePaySuccessEntity.setChannel("c01");
+//        tradePaySuccessEntity.setUserId("moying01");
+//        tradePaySuccessEntity.setOutTradeNo("407916072836");
+//        tradePaySuccessEntity.setOutTradeTime(new Date());
+//        TradePaySettlementEntity tradePaySettlementEntity = tradeSettlementOrderService.settlementMarketPayOrder(tradePaySuccessEntity);
+//        log.info("请求参数:{}", JSON.toJSONString(tradePaySuccessEntity));
+//        log.info("测试结果:{}", JSON.toJSONString(tradePaySettlementEntity));
+
+        // 暂停，等待MQ消息。处理完后，手动关闭程序
+        new CountDownLatch(1).await();
     }
 
 }

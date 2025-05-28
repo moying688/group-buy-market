@@ -9,13 +9,16 @@ import com.moying.domain.trade.service.ITradeSettlementOrderService;
 import com.moying.domain.trade.service.settlement.factory.TradeSettlementRuleFilterFactory;
 import com.moying.types.design.framework.link.model2.chain.BusinessLinkedList;
 import com.moying.types.enums.NotifyTaskHTTPEnumVO;
+import com.moying.types.exception.AppException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @Author: moying
@@ -33,6 +36,8 @@ public class TradeSettlementOrderService implements ITradeSettlementOrderService
 
     @Resource
     private ITradePort tradePort;
+    @Resource
+    private ThreadPoolExecutor threadPoolExecutor;
 
     @Resource
     private BusinessLinkedList<TradeSettlementRuleCommandEntity, TradeSettlementRuleFilterFactory.DynamicContext, TradeSettlementRuleFilterBackEntity>
@@ -66,7 +71,7 @@ public class TradeSettlementOrderService implements ITradeSettlementOrderService
                 .status(tradeSettlementRuleFilterBackEntity.getStatus())
                 .validStartTime(tradeSettlementRuleFilterBackEntity.getValidStartTime())
                 .validEndTime(tradeSettlementRuleFilterBackEntity.getValidEndTime())
-                .notifyUrl(tradeSettlementRuleFilterBackEntity.getNotifyUrl())
+                .notifyConfigVO(tradeSettlementRuleFilterBackEntity.getNotifyConfigVO())
                 .build();
 
         // 3.构建聚合对象
@@ -78,13 +83,21 @@ public class TradeSettlementOrderService implements ITradeSettlementOrderService
 
         // 4. 拼团交易结算
         // 是否是最后一单（最后一单完成需要通知
-        boolean isNotify = tradeRepository.settlementMarketPayOrder(groupBuyTeamSettlementAggregate);
+        NotifyTaskEntity notifyTaskEntity = tradeRepository.settlementMarketPayOrder(groupBuyTeamSettlementAggregate);
 
 
         // 5. 组队回调处理 - 处理失败也会有定时任务补偿，通过这样的方式，可以减轻任务调度，提高时效性
-        if (isNotify) {
-            Map<String, Integer> notifyResultMap = execSettlementNotifyJob(teamId);
-            log.info("回调通知拼团完结 result:{}", JSON.toJSONString(notifyResultMap));
+        if (null != notifyTaskEntity) {
+            threadPoolExecutor.execute(() -> {
+                Map<String, Integer> notifyResultMap = null;
+                try {
+                    notifyResultMap = execSettlementNotifyJob(notifyTaskEntity);
+                    log.info("回调通知拼团完结 result:{}", JSON.toJSONString(notifyResultMap));
+                } catch (Exception e) {
+                    log.error("回调通知拼团完结失败 result:{}", JSON.toJSONString(notifyResultMap), e);
+                    throw new AppException(e.getMessage());
+                }
+            });
         }
 
         // 6.返回结算信息
@@ -112,9 +125,14 @@ public class TradeSettlementOrderService implements ITradeSettlementOrderService
     public Map<String, Integer> execSettlementNotifyJob(String teamId) throws Exception {
         log.info("拼团交易-执行结算通知任务");
         // 查询指定组ID 未执行任务
-
         List<NotifyTaskEntity> notifyTaskEntityList = tradeRepository.queryUnExecutedNotifyTaskList(teamId);
         return execSettlementNotifyJob(notifyTaskEntityList);
+    }
+
+    @Override
+    public Map<String, Integer> execSettlementNotifyJob(NotifyTaskEntity notifyTaskEntity) throws Exception {
+        log.info("拼团交易-执行结算通知回调，指定 teamId:{} notifyTaskEntity:{}", notifyTaskEntity.getTeamId(), JSON.toJSONString(notifyTaskEntity));
+        return execSettlementNotifyJob(Collections.singletonList(notifyTaskEntity));
     }
 
     private Map<String, Integer> execSettlementNotifyJob(List<NotifyTaskEntity> notifyTaskEntityList) {

@@ -53,4 +53,7 @@ public class GroupBuyOrder {
     /** 回调地址 */
     private String notifyUrl;
 
+    /** 回调类型【HTTP、MQ】 */
+    private String notifyType;
+
 }

@@ -1,5 +1,6 @@
 package com.moying.domain.trade.model.entity;
 
+import com.moying.domain.trade.model.valobj.NotifyConfigVO;
 import com.moying.types.enums.GroupBuyOrderEnumVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,5 +38,5 @@ public class GroupBuyTeamEntity {
     private Date validEndTime;
 
     /** 回调地址 */
-    private String notifyUrl;
+    private NotifyConfigVO notifyConfigVO;
 }

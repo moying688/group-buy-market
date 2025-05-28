@@ -6,6 +6,8 @@ import com.moying.domain.trade.model.aggregate.GroupBuyOrderAggregate;
 import com.moying.domain.trade.model.aggregate.GroupBuyTeamSettlementAggregate;
 import com.moying.domain.trade.model.entity.*;
 import com.moying.domain.trade.model.valobj.GroupBuyProgressVO;
+import com.moying.domain.trade.model.valobj.NotifyConfigVO;
+import com.moying.domain.trade.model.valobj.NotifyTypeEnumVO;
 import com.moying.domain.trade.model.valobj.TradeOrderStatusEnumVO;
 import com.moying.infrastructure.dao.IGroupBuyActivityDao;
 import com.moying.infrastructure.dao.IGroupBuyOrderDao;
@@ -23,6 +25,7 @@ import com.moying.types.enums.ResponseCode;
 import com.moying.types.exception.AppException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,25 +58,6 @@ public class TradeRepository implements ITradeRepository {
     private DCCService dccService;
 
     @Override
-    public MarketPayOrderEntity queryMarketPayOrderEntityByOutTradeNo(String userId, String outTradeNo) {
-        GroupBuyOrderList groupBuyOrderListReq = new GroupBuyOrderList();
-        groupBuyOrderListReq.setUserId(userId);
-        groupBuyOrderListReq.setOutTradeNo(outTradeNo);
-
-        GroupBuyOrderList groupBuyOrderList = groupBuyOrderListDao
-                .queryGroupBuyOrderRecordByOutTradeNo(groupBuyOrderListReq);
-        if (null == groupBuyOrderList) return null;
-        return MarketPayOrderEntity.builder()
-                .teamId(groupBuyOrderList.getTeamId())
-                .orderId(groupBuyOrderList.getOrderId())
-                .deductionPrice(groupBuyOrderList.getDeductionPrice())
-                .payPrice(groupBuyOrderList.getPayPrice())
-                .originalPrice(groupBuyOrderList.getOriginalPrice())
-                .tradeOrderStatusEnumVO(TradeOrderStatusEnumVO.valueOf(groupBuyOrderList.getStatus()))
-                .build();
-    }
-
-    @Override
     @Transactional(timeout = 500)
     public MarketPayOrderEntity lockMarketPayOrder(GroupBuyOrderAggregate groupBuyOrderAggregate) {
         // 聚合对象信息
@@ -81,6 +65,7 @@ public class TradeRepository implements ITradeRepository {
         PayActivityEntity payActivityEntity = groupBuyOrderAggregate.getPayActivityEntity();
         PayDiscountEntity payDiscountEntity = groupBuyOrderAggregate.getPayDiscountEntity();
         Integer userTakeOrderCount = groupBuyOrderAggregate.getUserTakeOrderCount();
+        NotifyConfigVO notifyConfigVO = payDiscountEntity.getNotifyConfigVO();
 
         // 判断是否有团 - teamId 为空 -> 新团、不为空 -> 老团
         String teamId = payActivityEntity.getTeamId();
@@ -111,7 +96,8 @@ public class TradeRepository implements ITradeRepository {
                     .validEndTime(calendar.getTime())
                     .completeCount(0)
                     .lockCount(1)
-                    .notifyUrl(payDiscountEntity.getNotifyUrl())
+                    .notifyUrl(notifyConfigVO.getNotifyUrl())
+                    .notifyType(notifyConfigVO.getNotifyType().getCode())
                     .build();
 
             // 写入订单记录
@@ -158,6 +144,28 @@ public class TradeRepository implements ITradeRepository {
                 .payPrice(groupBuyOrderList.getPayPrice())
                 .originalPrice(groupBuyOrderList.getDeductionPrice())
                 .tradeOrderStatusEnumVO(TradeOrderStatusEnumVO.CREATE)
+                .build();
+    }
+
+    @Value("${mq.producer.topic.team-success}")
+    private String topic;
+
+    @Override
+    public MarketPayOrderEntity queryMarketPayOrderEntityByOutTradeNo(String userId, String outTradeNo) {
+        GroupBuyOrderList groupBuyOrderListReq = new GroupBuyOrderList();
+        groupBuyOrderListReq.setUserId(userId);
+        groupBuyOrderListReq.setOutTradeNo(outTradeNo);
+
+        GroupBuyOrderList groupBuyOrderList = groupBuyOrderListDao
+                .queryGroupBuyOrderRecordByOutTradeNo(groupBuyOrderListReq);
+        if (null == groupBuyOrderList) return null;
+        return MarketPayOrderEntity.builder()
+                .teamId(groupBuyOrderList.getTeamId())
+                .orderId(groupBuyOrderList.getOrderId())
+                .deductionPrice(groupBuyOrderList.getDeductionPrice())
+                .payPrice(groupBuyOrderList.getPayPrice())
+                .originalPrice(groupBuyOrderList.getOriginalPrice())
+                .tradeOrderStatusEnumVO(TradeOrderStatusEnumVO.valueOf(groupBuyOrderList.getStatus()))
                 .build();
     }
 
@@ -212,17 +220,22 @@ public class TradeRepository implements ITradeRepository {
                 .status(GroupBuyOrderEnumVO.valueOf(groupBuyOrder.getStatus()))
                 .validStartTime(groupBuyOrder.getValidStartTime())
                 .validEndTime(groupBuyOrder.getValidEndTime())
-                .notifyUrl(groupBuyOrder.getNotifyUrl())
+                .notifyConfigVO(NotifyConfigVO.builder()
+                        .notifyType(NotifyTypeEnumVO.valueOf(groupBuyOrder.getNotifyType()))
+                        .notifyUrl(groupBuyOrder.getNotifyUrl())
+                        // MQ 是固定的
+                        .notifyMQ(topic)
+                        .build())
                 .build();
     }
 
     @Override
     @Transactional(timeout = 500)
-    public boolean settlementMarketPayOrder(GroupBuyTeamSettlementAggregate groupBuyTeamSettlementAggregate) {
+    public NotifyTaskEntity settlementMarketPayOrder(GroupBuyTeamSettlementAggregate groupBuyTeamSettlementAggregate) {
         UserEntity userEntity = groupBuyTeamSettlementAggregate.getUserEntity();
         GroupBuyTeamEntity groupBuyTeamEntity = groupBuyTeamSettlementAggregate.getGroupBuyTeamEntity();
         TradePaySuccessEntity tradePaySuccessEntity = groupBuyTeamSettlementAggregate.getTradePaySuccessEntity();
-
+        NotifyConfigVO notifyConfigVO = groupBuyTeamEntity.getNotifyConfigVO();
 
         // 1. 更新拼团订单明细状态
         GroupBuyOrderList groupBuyOrderList = new GroupBuyOrderList();
@@ -254,7 +267,9 @@ public class TradeRepository implements ITradeRepository {
             NotifyTask notifyTask = new NotifyTask();
             notifyTask.setActivityId(groupBuyTeamEntity.getActivityId());
             notifyTask.setTeamId(groupBuyTeamEntity.getTeamId());
-            notifyTask.setNotifyUrl(groupBuyTeamEntity.getNotifyUrl());
+            notifyTask.setNotifyType(notifyConfigVO.getNotifyType().getCode());
+            notifyTask.setNotifyMQ(NotifyTypeEnumVO.MQ.equals(notifyConfigVO.getNotifyType()) ? notifyConfigVO.getNotifyMQ() : null);
+            notifyTask.setNotifyUrl(NotifyTypeEnumVO.HTTP.equals(notifyConfigVO.getNotifyType()) ? notifyConfigVO.getNotifyUrl() : null);
             notifyTask.setNotifyCount(0);
             notifyTask.setNotifyStatus(0);
             notifyTask.setParameterJson(JSON.toJSONString(new HashMap<String, Object>() {{
@@ -263,9 +278,17 @@ public class TradeRepository implements ITradeRepository {
             }}));
 
             notifyTaskDao.insert(notifyTask);
-            return true;
+
+            return NotifyTaskEntity.builder()
+                    .teamId(notifyTask.getTeamId())
+                    .notifyType(notifyTask.getNotifyType())
+                    .notifyMQ(notifyTask.getNotifyMQ())
+                    .notifyUrl(notifyTask.getNotifyUrl())
+                    .notifyCount(notifyTask.getNotifyCount())
+                    .parameterJson(notifyTask.getParameterJson())
+                    .build();
         }
-        return false;
+        return null;
     }
 
     @Override
@@ -282,6 +305,8 @@ public class TradeRepository implements ITradeRepository {
       for (NotifyTask notifyTask : notifyTasks) {
           NotifyTaskEntity notifyTaskEntity = NotifyTaskEntity.builder()
                   .teamId(notifyTask.getTeamId())
+                  .notifyType(notifyTask.getNotifyType())
+                  .notifyMQ(notifyTask.getNotifyMQ())
                   .notifyUrl(notifyTask.getNotifyUrl())
                   .notifyCount(notifyTask.getNotifyCount())
                   .parameterJson(notifyTask.getParameterJson())
@@ -297,6 +322,8 @@ public class TradeRepository implements ITradeRepository {
         if (null == notifyTask) return new ArrayList<>();
         return Collections.singletonList(NotifyTaskEntity.builder()
                 .teamId(notifyTask.getTeamId())
+                .notifyType(notifyTask.getNotifyType())
+                .notifyMQ(notifyTask.getNotifyMQ())
                 .notifyUrl(notifyTask.getNotifyUrl())
                 .notifyCount(notifyTask.getNotifyCount())
                 .parameterJson(notifyTask.getParameterJson())

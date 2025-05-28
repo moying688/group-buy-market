@@ -2,6 +2,7 @@ package com.moying.trigger.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.spring.annotation.MessageModel;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.apache.rocketmq.spring.core.RocketMQPushConsumerLifecycleListener;
@@ -18,18 +19,19 @@ import javax.annotation.PostConstruct;
  */
 
 @RocketMQMessageListener(topic = "group_team_success_topic",
-        consumerGroup = "group_buy_team_success_consumer")
+        consumerGroup = "group_buy_team_success_consumer",
+        messageModel = MessageModel.BROADCASTING)
 @Component
-public class TeamSuccessTopicListener implements RocketMQListener<String>
-//        , RocketMQPushConsumerLifecycleListener
-{
+@Slf4j
+public class TeamSuccessTopicListener implements RocketMQListener<String> {
 
 
     @Value("${server.port}")
     private String serverPort;
     @Override
     public void onMessage(String message) {
-        System.out.println("接收到消息：" + message);
+
+        log.info("拼团完成，接收消息：{}", message);
     }
 
 //    @Override

@@ -45,9 +45,9 @@ rocketmq:
     # 发送消息超时时间，默认3000
     sendMessageTimeout: 10000
     # 发送消息失败重试次数，默认2
-    retryTimesWhenSendFailed: 2
+    retryTimesWhenSendFailed: 5
     # 异步消息重试次数，默认2
-    retryTimesWhenSendAsyncFailed: 2
+    retryTimesWhenSendAsyncFailed: 5
     # 消息最大长度，默认1024 * 1024 * 4(默认4M)
     maxMessageSize: 4096
     # 压缩消息阈值，默认4k(1024 * 4)

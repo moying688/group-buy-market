@@ -30,11 +30,16 @@ public class NotifyTask {
     private Integer notifyCount;
     /** 回调状态【0初始、1完成、2重试、3失败】 */
     private Integer notifyStatus;
+    /** 回调类型【HTTP、MQ】 */
+    private String notifyType;
+    /** 回调消息 */
+    private String notifyMQ;
     /** 参数对象 */
     private String parameterJson;
     /** 创建时间 */
     private Date createTime;
     /** 更新时间 */
     private Date updateTime;
+
 
 }
