@@ -39,6 +39,8 @@ services:
       - ALIPAY_RETURN_URL=http://117.72.219.70
       - REDIS_SDK_CONFIG_HOST=redis
       - REDIS_SDK_CONFIG_PORT=6379
+      - ROCKETMQ_NAME_SERVER=117.72.219.70:9876
+      - ROCKETMQ_PRODUCER_GROUP=default-producer-group
     volumes:
       - ./log:/data/log
     logging:
@@ -67,6 +69,8 @@ services:
       - SPRING_HIKARI_POOL_NAME=Retail_HikariCP
       - REDIS_SDK_CONFIG_HOST=redis
       - REDIS_SDK_CONFIG_PORT=6379
+      - ROCKETMQ_NAME_SERVER=117.72.219.70:9876
+      - ROCKETMQ_PRODUCER_GROUP=default-producer-group
     volumes:
       - ./log:/data/log
     logging:
@@ -93,6 +97,8 @@ services:
       - SPRING_HIKARI_POOL_NAME=Retail_HikariCP
       - REDIS_SDK_CONFIG_HOST=redis
       - REDIS_SDK_CONFIG_PORT=6379
+      - ROCKETMQ_NAME_SERVER=127.0.0.1:9876
+      - ROCKETMQ_PRODUCER_GROUP=default-producer-group
     volumes:
       - ./log:/data/log
     logging:
@@ -183,7 +189,23 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-
+  rocketmq:
+    image: xuchengen/rocketmq:latest
+    container_name: rocketmq
+    hostname: rocketmq
+    restart: always
+    ports:
+      - "7397:7397"
+      - "9876:9876"
+      - "10909:10909"
+      - "10911:10911"
+      - "10912:10912"
+    volumes:
+      - ./data:/home/app/data
+      - /etc/localtime:/etc/localtime
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - my-network
 networks:
   my-network:
     driver: bridge
