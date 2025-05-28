@@ -18,4 +18,6 @@ import lombok.NoArgsConstructor;
 public class TradeLockRuleFilterBackEntity {
     // 用户参与活动的订单量
     private Integer userTakeOrderCount;
+    // 恢复库存的 key
+    private String recoveryTeamStockKey;
 }

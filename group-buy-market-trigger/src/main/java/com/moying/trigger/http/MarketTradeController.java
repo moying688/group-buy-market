@@ -102,8 +102,8 @@ public class MarketTradeController implements IMarketTradeService {
                 if (isIn) {
                     log.info("交易锁单拦截-用户已经在该拼团中:{} {}", userId, teamId);
                     return Response.<LockMarketPayOrderResponseDTO>builder()
-                            .code(ResponseCode.E0008.getCode())
-                            .info(ResponseCode.E0008.getInfo())
+                            .code(ResponseCode.E0009.getCode())
+                            .info(ResponseCode.E0009.getInfo())
                             .build();
                 }
 

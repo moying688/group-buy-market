@@ -18,11 +18,13 @@ import com.moying.infrastructure.dao.po.GroupBuyOrder;
 import com.moying.infrastructure.dao.po.GroupBuyOrderList;
 import com.moying.infrastructure.dao.po.NotifyTask;
 import com.moying.infrastructure.dcc.DCCService;
+import com.moying.infrastructure.redis.IRedisService;
 import com.moying.types.common.Constants;
 import com.moying.types.enums.ActivityStatusEnumVO;
 import com.moying.types.enums.GroupBuyOrderEnumVO;
 import com.moying.types.enums.ResponseCode;
 import com.moying.types.exception.AppException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: moying
@@ -41,6 +44,7 @@ import java.util.*;
 
 
 @Repository
+@Slf4j
 public class TradeRepository implements ITradeRepository {
 
     @Resource
@@ -56,6 +60,12 @@ public class TradeRepository implements ITradeRepository {
 
     @Resource
     private DCCService dccService;
+
+    @Value("${mq.producer.topic.team-success}")
+    private String topic;
+
+    @Resource
+    private IRedisService redisService;
 
     @Override
     @Transactional(timeout = 500)
@@ -147,8 +157,7 @@ public class TradeRepository implements ITradeRepository {
                 .build();
     }
 
-    @Value("${mq.producer.topic.team-success}")
-    private String topic;
+
 
     @Override
     public MarketPayOrderEntity queryMarketPayOrderEntityByOutTradeNo(String userId, String outTradeNo) {
@@ -349,5 +358,39 @@ public class TradeRepository implements ITradeRepository {
     public boolean queryGroupBuyTeamByUserIdAndTeamId(String userId, String teamId) {
        int count = groupBuyOrderListDao.queryGroupBuyTeamByUserIdAndTeamId(userId, teamId);
         return count > 0;
+    }
+
+    @Override
+    public boolean occupyTeamStock(String teamStockKey, String recoveryTeamStockKey, Integer target, Integer validTime) {
+        // 失败恢复量
+        Long recoveryCount = redisService.getAtomicLong(recoveryTeamStockKey);
+        recoveryCount = recoveryCount == null ? 0 : recoveryCount;
+
+        // incr得到当前库存宇总量与恢复量做对比
+        // 因为是有队伍后才会进入到抢占队伍名额，所以需要额外+1
+        long occupy  = redisService.incr(teamStockKey) + 1;
+
+        if(occupy > target + recoveryCount){
+//            redisService.setAtomicLong(teamStockKey, target);
+            return false;
+        }
+        // 给每个产生的值加锁为兜底设计
+        // validTime + 60分钟 让数据保留时间稍微长一些，便于排查问题。
+        String lockKey = teamStockKey + Constants.UNDERLINE + occupy;
+        Boolean lock = redisService.setNx(lockKey, validTime + 60, TimeUnit.MINUTES);
+
+        if (!lock) {
+            log.info("组队库存加锁失败 {}", lockKey);
+        }
+
+        return lock;
+    }
+
+    @Override
+    public void recoveryTeamStock(String recoveryTeamStockKey, Integer validTime) {
+        // 首次组队拼团，是没有 teamId 的，所以不需要这个做处理。
+        if (StringUtils.isBlank(recoveryTeamStockKey)) return;
+
+        redisService.incr(recoveryTeamStockKey);
     }
 }

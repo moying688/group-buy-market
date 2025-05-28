@@ -43,10 +43,13 @@ public class UserTakeLimitRuleFilter  implements
             log.info("用户参与次数校验，超过参与次数 activityId:{},userId:{}", requestParameter.getActivityId(),requestParameter.getUserId());
             throw new AppException(ResponseCode.E0103);
         }
+        dynamicContext.setUserTakeOrderCount(userTakeCount);
 
+        // 进入下一个责任结点
+        return next(requestParameter, dynamicContext);
 
-        return TradeLockRuleFilterBackEntity.builder()
-                .userTakeOrderCount(userTakeCount)
-                .build();
+//        return TradeLockRuleFilterBackEntity.builder()
+//                .userTakeOrderCount(userTakeCount)
+//                .build();
     }
 }

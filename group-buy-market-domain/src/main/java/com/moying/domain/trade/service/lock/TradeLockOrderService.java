@@ -50,6 +50,7 @@ public class TradeLockOrderService implements ITradeLockOrderService {
         TradeLockRuleFilterBackEntity tradeLockRuleFilterBackEntity = tradeRuleFilter.apply(TradeLockRuleCommandEntity.builder()
                 .activityId(payActivityEntity.getActivityId())
                 .userId(userEntity.getUserId())
+                .teamId(payActivityEntity.getTeamId())
                 .build(), new TradeLockRuleFilterFactory.DynamicContext());
 
 
@@ -62,7 +63,13 @@ public class TradeLockOrderService implements ITradeLockOrderService {
                 .build();
 
         // 锁定营销支付订单 - 这会用户只是下单还没有支付。后续会有2个流程；支付成功、超时未支付（回退）
-        return tradeRepository.lockMarketPayOrder(groupBuyOrderAggregate);
+       try{
+           return tradeRepository.lockMarketPayOrder(groupBuyOrderAggregate);
+       }catch (Exception e){
+           // 记录失败恢复量
+           tradeRepository.recoveryTeamStock(tradeLockRuleFilterBackEntity.getRecoveryTeamStockKey(), payActivityEntity.getValidTime());
+           throw e;
+        }
     }
 
     @Override
