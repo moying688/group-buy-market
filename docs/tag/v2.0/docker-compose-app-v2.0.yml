@@ -189,20 +189,51 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-  rocketmq:
-    image: livinphp/rocketmq:5.1.3
-    container_name: rocketmq
+  rocketmq-namesrv:
+    image: apache/rocketmq:5.1.3
+    container_name: rocketmq-namesrv
+    command: sh mqnamesrv
     ports:
-      - 9009:8080
       - 9876:9876
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./rocketmq/logs/namesrv:/home/rocketmq/logs
+      - ./rocketmq/store/namesrv:/home/rocketmq/store
+    networks:
+      - my-network
+
+    # Broker
+  rocketmq-broker:
+    image: apache/rocketmq:5.1.3
+    container_name: rocketmq-broker
+    command: sh mqbroker -c /opt/rocketmq/conf/broker.conf
+    depends_on:
+      - rocketmq-namesrv
+    ports:
       - 10909:10909
       - 10911:10911
       - 10912:10912
-    volumes:
-      - ./data:/home/app/data
     environment:
-      TZ: "Asia/Shanghai"
-      NAMESRV_ADDR: "rocketmq:9876"
+      TZ: Asia/Shanghai
+      NAMESRV_ADDR: rocketmq-namesrv:9876
+    volumes:
+      - ./rocketmq/conf/broker.conf:/opt/rocketmq/conf/broker.conf
+      - ./rocketmq/logs/broker:/home/rocketmq/logs
+      - ./rocketmq/store/broker:/home/rocketmq/store
+    networks:
+      - my-network
+
+    # Dashboard
+  rocketmq-dashboard:
+    image: apacherocketmq/rocketmq-dashboard:1.0.0
+    container_name: rocketmq-dashboard
+    depends_on:
+      - rocketmq-namesrv
+    ports:
+      - 9009:8080
+    environment:
+      JAVA_OPTS: "-Drocketmq.namesrv.addr=rocketmq-namesrv:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false"
     networks:
       - my-network
 networks:
