@@ -1,4 +1,4 @@
-version: '2.4'
+version: '3.8'
 
 services:
 
@@ -41,11 +41,14 @@ services:
       - ALIPAY_RETURN_URL=http://117.72.219.70
       - REDIS_SDK_CONFIG_HOST=redis
       - REDIS_SDK_CONFIG_PORT=6379
-      - ROCKETMQ_NAME_SERVER=117.72.219.70:9876
+      - ROCKETMQ_NAME_SERVER=rocketmq-namesrv:9876
       - ROCKETMQ_PRODUCER_GROUP=pay_mall_success_producer
     volumes:
       - ./log:/data/log
-    mem_limit: 800m
+    deploy:
+      resources:
+        limits:
+          memory: 800M
     logging:
       driver: "json-file"
       options:
@@ -70,11 +73,14 @@ services:
       - SPRING_HIKARI_POOL_NAME=Retail_HikariCP
       - REDIS_SDK_CONFIG_HOST=redis
       - REDIS_SDK_CONFIG_PORT=6379
-      - ROCKETMQ_NAME_SERVER=117.72.219.70:9876
+      - ROCKETMQ_NAME_SERVER=rocketmq-namesrv:9876
       - ROCKETMQ_PRODUCER_GROUP=group_buy_team_success_producer
     volumes:
       - ./log:/data/log
-    mem_limit: 800m
+    deploy:
+      resources:
+        limits:
+          memory: 800M
     logging:
       driver: "json-file"
       options:
@@ -135,14 +141,17 @@ services:
     volumes:
       - ./rocketmq/logs/namesrv:/home/rocketmq/logs
       - ./rocketmq/store/namesrv:/home/rocketmq/store
-    mem_limit: 512m
+    deploy:
+      resources:
+        limits:
+          memory: 512M
     networks:
       - my-network
 
   rocketmq-broker:
     image: apache/rocketmq:5.1.3
     container_name: rocketmq-broker
-    command: sh mqbroker -c /opt/rocketmq/conf/broker.conf
+    command: sh -c "JAVA_OPT='-Xms256m -Xmx512m -Xmn128m' sh mqbroker -c /opt/rocketmq/conf/broker.conf"
     depends_on:
       - rocketmq-namesrv
     ports:
@@ -156,7 +165,10 @@ services:
       - ./rocketmq/conf/broker.conf:/opt/rocketmq/conf/broker.conf
       - ./rocketmq/logs/broker:/home/rocketmq/logs
       - ./rocketmq/store/broker:/home/rocketmq/store
-    mem_limit: 1g
+    deploy:
+      resources:
+        limits:
+          memory: 768M
     networks:
       - my-network
 
