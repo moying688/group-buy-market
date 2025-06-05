@@ -180,7 +180,7 @@ services:
       - ./rocketmq/logs/broker:/home/rocketmq/logs
       - ./rocketmq/logs/rocketmqlogs:/home/rocketmq/logs/rocketmqlogs
       - ./rocketmq/store/broker:/home/rocketmq/store
-      - ./rocketmq/store/timerwheel:/home/rocketmq/store/timerwheel
+      - ./rocketmq/store/timerwheel:/home/rocketmq/store/timerwheel:rw
     deploy:
       resources:
         limits:
