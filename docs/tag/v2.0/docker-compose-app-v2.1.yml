@@ -44,7 +44,6 @@ services:
       - REDIS_SDK_CONFIG_PORT=6379
       - ROCKETMQ_NAME_SERVER=rocketmq-namesrv:9876
       - ROCKETMQ_PRODUCER_GROUP=pay_mall_success_producer
-
     volumes:
       - ./log:/data/log
     deploy:
@@ -130,32 +129,34 @@ services:
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
     command: redis-server /usr/local/etc/redis/redis.conf --maxmemory 128mb
     deploy:
-        resources:
-          limits:
-            memory: 128M
-    networks:
-      - my-network
+      resources:
+        limits:
+          memory: 128M
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 3
+    networks:
+      - my-network
 
   rocketmq-namesrv:
     image: apache/rocketmq:5.1.3
     container_name: rocketmq-namesrv
-    command: sh mqnamesrv
+    command: >
+      sh -c "export JAVA_OPT_EXT='-Xms128m -Xmx256m' && sh mqnamesrv"
     ports:
       - 9876:9876
     environment:
       TZ: Asia/Shanghai
     volumes:
       - ./rocketmq/logs/namesrv:/home/rocketmq/logs
+      - ./rocketmq/logs/rocketmqlogs:/home/rocketmq/logs/rocketmqlogs
       - ./rocketmq/store/namesrv:/home/rocketmq/store
     deploy:
       resources:
         limits:
-          memory: 128M
+          memory: 512M
     networks:
       - my-network
 
@@ -163,8 +164,8 @@ services:
     image: apache/rocketmq:5.1.3
     container_name: rocketmq-broker
     command: >
-      sh -c "JAVA_OPT='-Xms256m -Xmx256m -Xmn128m -XX:MaxDirectMemorySize=64m -XX:+UseSerialGC'
-      sh mqbroker -c /opt/rocketmq/conf/broker.conf"
+      sh -c "export JAVA_OPT_EXT='-Xms256m -Xmx512m -Xmn128m -XX:MaxDirectMemorySize=64m -XX:+UseSerialGC' && 
+             sh mqbroker -c /opt/rocketmq/conf/broker.conf"
     depends_on:
       - rocketmq-namesrv
     ports:
@@ -177,14 +178,14 @@ services:
     volumes:
       - ./rocketmq/conf/broker.conf:/opt/rocketmq/conf/broker.conf
       - ./rocketmq/logs/broker:/home/rocketmq/logs
+      - ./rocketmq/logs/rocketmqlogs:/home/rocketmq/logs/rocketmqlogs
       - ./rocketmq/store/broker:/home/rocketmq/store
     deploy:
       resources:
         limits:
-          memory: 384M
+          memory: 768M
     networks:
       - my-network
-
 
 networks:
   my-network:
