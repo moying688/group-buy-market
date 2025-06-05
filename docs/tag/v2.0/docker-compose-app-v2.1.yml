@@ -164,8 +164,8 @@ services:
     image: apache/rocketmq:5.1.3
     container_name: rocketmq-broker
     command: >
-      sh -c "export JAVA_OPT_EXT='-Xms256m -Xmx256m -XX:MaxDirectMemorySize=64m -XX:+UseSerialGC' && 
-             sh mqbroker -c /opt/rocketmq/conf/broker.conf"
+      sh -c "export JAVA_OPT_EXT='-Xms256m -Xmx256m -XX:MaxDirectMemorySize=64m' &&
+      sh mqbroker -c /opt/rocketmq/conf/broker.conf"
     depends_on:
       - rocketmq-namesrv
     ports:
