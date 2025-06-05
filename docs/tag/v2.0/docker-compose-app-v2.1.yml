@@ -154,6 +154,8 @@ services:
     environment:
       TZ: "Asia/Shanghai"
       NAMESRV_ADDR: "rocketmq:9876"
+    privileged: true
+
 
 
 networks:
