@@ -120,7 +120,7 @@ services:
 
   redis:
     image: registry.cn-hangzhou.aliyuncs.com/xfg-studio/redis:6.2
-    container_name: redis
+    container_name: redis-buy
     restart: always
     hostname: redis
     privileged: true
