@@ -240,17 +240,17 @@ LOCK TABLES `group_buy_order` WRITE;
 /*!40000 ALTER TABLE `group_buy_order`
     DISABLE KEYS */;
 
-INSERT INTO `group_buy_order` (`id`, `team_id`, `activity_id`, `source`, `channel`, `original_price`, `deduction_price`,
-                               `pay_price`, `target_count`, `complete_count`, `lock_count`, `status`,
-                               `valid_start_time`, `valid_end_time`, `notify_type`, `notify_url`, `create_time`,
-                               `update_time`)
-VALUES (1, '58693013', 100123, 's01', 'c01', 100.00, 20.00, 80.00, 1, 1, 1, 1, '2025-03-16 17:43:44',
-        '2025-05-16 17:58:44', 'MQ', NULL, '2025-03-16 17:43:43', '2025-03-16 18:23:05'),
-       (2, '16341565', 100123, 's01', 'c01', 100.00, 20.00, 80.00, 1, 1, 1, 1, '2025-03-16 18:27:52',
-        '2025-03-16 18:42:52', 'HTTP', 'http://127.0.0.1:8091/api/v1/test/group_buy_notify', '2025-03-16 18:27:51',
-        '2025-03-16 18:28:58'),
-       (3, '63403622', 100123, 's01', 'c01', 100.00, 20.00, 80.00, 1, 1, 1, 1, '2025-03-17 22:11:26',
-        '2025-03-17 22:26:26', 'MQ', NULL, '2025-03-17 22:11:26', '2025-03-17 22:12:04');
+# INSERT INTO `group_buy_order` (`id`, `team_id`, `activity_id`, `source`, `channel`, `original_price`, `deduction_price`,
+#                                `pay_price`, `target_count`, `complete_count`, `lock_count`, `status`,
+#                                `valid_start_time`, `valid_end_time`, `notify_type`, `notify_url`, `create_time`,
+#                                `update_time`)
+# VALUES (1, '58693013', 100123, 's01', 'c01', 100.00, 20.00, 80.00, 1, 1, 1, 1, '2025-03-16 17:43:44',
+#         '2025-05-16 17:58:44', 'MQ', NULL, '2025-03-16 17:43:43', '2025-03-16 18:23:05'),
+#        (2, '16341565', 100123, 's01', 'c01', 100.00, 20.00, 80.00, 1, 1, 1, 1, '2025-03-16 18:27:52',
+#         '2025-03-16 18:42:52', 'HTTP', 'http://127.0.0.1:8091/api/v1/test/group_buy_notify', '2025-03-16 18:27:51',
+#         '2025-03-16 18:28:58'),
+#        (3, '63403622', 100123, 's01', 'c01', 100.00, 20.00, 80.00, 1, 1, 1, 1, '2025-03-17 22:11:26',
+#         '2025-03-17 22:26:26', 'MQ', NULL, '2025-03-17 22:11:26', '2025-03-17 22:12:04');
 
 /*!40000 ALTER TABLE `group_buy_order`
     ENABLE KEYS */;
@@ -293,18 +293,18 @@ LOCK TABLES `group_buy_order_list` WRITE;
 /*!40000 ALTER TABLE `group_buy_order_list`
     DISABLE KEYS */;
 
-INSERT INTO `group_buy_order_list` (`id`, `user_id`, `team_id`, `order_id`, `activity_id`, `start_time`, `end_time`,
-                                    `goods_id`, `source`, `channel`, `original_price`, `deduction_price`, `pay_price`,
-                                    `status`, `out_trade_no`, `out_trade_time`, `biz_id`, `create_time`, `update_time`)
-VALUES (1, 'xfg01', '58693013', '480088144059', 100123, '2024-12-07 10:19:40', '2029-12-07 10:19:40', '9890001', 's01',
-        'c01', 100.00, 20.00, 80.00, 1, '214969043474', '2025-03-16 18:23:05', '100123_xfg01_1', '2025-03-16 17:43:43',
-        '2025-03-16 18:23:05'),
-       (2, 'xfg02', '16341565', '550620893253', 100123, '2024-12-07 10:19:40', '2029-12-07 10:19:40', '9890001', 's01',
-        'c01', 100.00, 20.00, 80.00, 1, '539291175688', '2025-03-16 18:28:59', '100123_xfg02_1', '2025-03-16 18:27:51',
-        '2025-03-16 18:28:58'),
-       (3, 'xfg03', '63403622', '221878862945', 100123, '2024-12-07 10:19:40', '2029-12-07 10:19:40', '9890001', 's01',
-        'c01', 100.00, 20.00, 80.00, 1, '904941690333', '2025-03-17 22:12:04', '100123_xfg03_1', '2025-03-17 22:11:26',
-        '2025-03-17 22:12:04');
+# INSERT INTO `group_buy_order_list` (`id`, `user_id`, `team_id`, `order_id`, `activity_id`, `start_time`, `end_time`,
+#                                     `goods_id`, `source`, `channel`, `original_price`, `deduction_price`, `pay_price`,
+#                                     `status`, `out_trade_no`, `out_trade_time`, `biz_id`, `create_time`, `update_time`)
+# VALUES (1, 'xfg01', '58693013', '480088144059', 100123, '2024-12-07 10:19:40', '2029-12-07 10:19:40', '9890001', 's01',
+#         'c01', 100.00, 20.00, 80.00, 1, '214969043474', '2025-03-16 18:23:05', '100123_xfg01_1', '2025-03-16 17:43:43',
+#         '2025-03-16 18:23:05'),
+#        (2, 'xfg02', '16341565', '550620893253', 100123, '2024-12-07 10:19:40', '2029-12-07 10:19:40', '9890001', 's01',
+#         'c01', 100.00, 20.00, 80.00, 1, '539291175688', '2025-03-16 18:28:59', '100123_xfg02_1', '2025-03-16 18:27:51',
+#         '2025-03-16 18:28:58'),
+#        (3, 'xfg03', '63403622', '221878862945', 100123, '2024-12-07 10:19:40', '2029-12-07 10:19:40', '9890001', 's01',
+#         'c01', 100.00, 20.00, 80.00, 1, '904941690333', '2025-03-17 22:12:04', '100123_xfg03_1', '2025-03-17 22:11:26',
+#         '2025-03-17 22:12:04');
 
 /*!40000 ALTER TABLE `group_buy_order_list`
     ENABLE KEYS */;
@@ -338,17 +338,17 @@ LOCK TABLES `notify_task` WRITE;
 /*!40000 ALTER TABLE `notify_task`
     DISABLE KEYS */;
 
-INSERT INTO `notify_task` (`id`, `activity_id`, `team_id`, `notify_type`, `notify_mq`, `notify_url`, `notify_count`,
-                           `notify_status`, `parameter_json`, `create_time`, `update_time`)
-VALUES (7, 100123, '58693013', 'MQ', 'topic.team_success', NULL, 1, 1,
-        '{\"teamId\":\"58693013\",\"outTradeNoList\":[\"214969043474\"]}', '2025-03-16 18:23:05',
-        '2025-03-16 18:23:05'),
-       (8, 100123, '16341565', 'HTTP', 'topic.team_success', 'http://127.0.0.1:8091/api/v1/test/group_buy_notify', 1, 1,
-        '{\"teamId\":\"16341565\",\"outTradeNoList\":[\"539291175688\"]}', '2025-03-16 18:28:59',
-        '2025-03-16 18:29:12'),
-       (9, 100123, '63403622', 'MQ', 'topic.team_success', NULL, 1, 1,
-        '{\"teamId\":\"63403622\",\"outTradeNoList\":[\"904941690333\"]}', '2025-03-17 22:12:04',
-        '2025-03-17 22:12:04');
+# INSERT INTO `notify_task` (`id`, `activity_id`, `team_id`, `notify_type`, `notify_mq`, `notify_url`, `notify_count`,
+#                            `notify_status`, `parameter_json`, `create_time`, `update_time`)
+# VALUES (7, 100123, '58693013', 'MQ', 'topic.team_success', NULL, 1, 1,
+#         '{\"teamId\":\"58693013\",\"outTradeNoList\":[\"214969043474\"]}', '2025-03-16 18:23:05',
+#         '2025-03-16 18:23:05'),
+#        (8, 100123, '16341565', 'HTTP', 'topic.team_success', 'http://127.0.0.1:8091/api/v1/test/group_buy_notify', 1, 1,
+#         '{\"teamId\":\"16341565\",\"outTradeNoList\":[\"539291175688\"]}', '2025-03-16 18:28:59',
+#         '2025-03-16 18:29:12'),
+#        (9, 100123, '63403622', 'MQ', 'topic.team_success', NULL, 1, 1,
+#         '{\"teamId\":\"63403622\",\"outTradeNoList\":[\"904941690333\"]}', '2025-03-17 22:12:04',
+#         '2025-03-17 22:12:04');
 
 /*!40000 ALTER TABLE `notify_task`
     ENABLE KEYS */;
