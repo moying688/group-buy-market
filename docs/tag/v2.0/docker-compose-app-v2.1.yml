@@ -154,6 +154,7 @@ services:
     environment:
       TZ: "Asia/Shanghai"
       NAMESRV_ADDR: "rocketmq:9876"
+      JAVA_OPT_EXT: "-Xms256m -Xmx512m -Xmn128m"
     privileged: true
     networks:
       - my-network
