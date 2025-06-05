@@ -42,7 +42,7 @@ services:
       - ALIPAY_RETURN_URL=http://117.72.219.70
       - REDIS_SDK_CONFIG_HOST=redis
       - REDIS_SDK_CONFIG_PORT=6379
-      - ROCKETMQ_NAME_SERVER=rocketmq-namesrv:9876
+      - ROCKETMQ_NAME_SERVER=rocketmq:9876
       - ROCKETMQ_PRODUCER_GROUP=pay_mall_success_producer
     volumes:
       - ./log:/data/log
@@ -75,7 +75,7 @@ services:
       - SPRING_HIKARI_POOL_NAME=Retail_HikariCP
       - REDIS_SDK_CONFIG_HOST=redis
       - REDIS_SDK_CONFIG_PORT=6379
-      - ROCKETMQ_NAME_SERVER=rocketmq-namesrv:9876
+      - ROCKETMQ_NAME_SERVER=rocketmq:9876
       - ROCKETMQ_PRODUCER_GROUP=group_buy_team_success_producer
     volumes:
       - ./log:/data/log
