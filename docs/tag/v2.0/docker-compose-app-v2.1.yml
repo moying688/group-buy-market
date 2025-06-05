@@ -166,14 +166,13 @@ services:
     depends_on:
       - rocketmq-namesrv
     ports:
-      - 10909:10909   # RPC
-      - 10911:10911   # Broker服务端口
-      - 10912:10912   # Broker HA
+      - 10909:10909
+      - 10911:10911
+      - 10912:10912
     command: sh mqbroker -n rocketmq-namesrv:9876 -c /home/rocketmq/conf/broker.conf
     volumes:
-      - ./rocketmq/broker/logs:/home/rocketmq/logs
-      - ./rocketmq/broker/store:/home/rocketmq/store
       - ./rocketmq/broker/broker.conf:/home/rocketmq/conf/broker.conf
+      - ./rocketmq/broker/store:/home/rocketmq/store
     environment:
       - JAVA_OPT_EXT=-Xms256m -Xmx512m -Xmn256m
       - TZ=Asia/Shanghai
