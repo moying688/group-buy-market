@@ -140,20 +140,59 @@ services:
     networks:
       - my-network
 
-  rocketmq:
-    image: livinphp/rocketmq:5.1.3
-    container_name: rocketmq
+  rocketmq-namesrv:
+    image: apache/rocketmq:5.1.3
+    container_name: rocketmq-namesrv
     ports:
-      - 9009:9009
       - 9876:9876
-      - 10909:10909
-      - 10911:10911
-      - 10912:10912
+    command: sh mqnamesrv
     volumes:
-      - ./data:/home/app/data
+      - ./rocketmq/namesrv/logs:/home/rocketmq/logs
+      - ./rocketmq/namesrv/store:/home/rocketmq/store
     environment:
-      TZ: "Asia/Shanghai"
-      NAMESRV_ADDR: "rocketmq:9876"
+      - JAVA_OPT_EXT=-Xms128m -Xmx256m -Xmn128m
+      - TZ=Asia/Shanghai
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9876" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - my-network
+
+  rocketmq-broker:
+    image: apache/rocketmq:5.1.3
+    container_name: rocketmq-broker
+    depends_on:
+      - rocketmq-namesrv
+    ports:
+      - 10909:10909   # RPC
+      - 10911:10911   # Broker服务端口
+      - 10912:10912   # Broker HA
+    command: sh mqbroker -n rocketmq-namesrv:9876 -c /home/rocketmq/conf/broker.conf
+    volumes:
+      - ./rocketmq/broker/logs:/home/rocketmq/logs
+      - ./rocketmq/broker/store:/home/rocketmq/store
+      - ./rocketmq/broker/broker.conf:/home/rocketmq/conf/broker.conf
+    environment:
+      - JAVA_OPT_EXT=-Xms256m -Xmx512m -Xmn256m
+      - TZ=Asia/Shanghai
+    networks:
+      - my-network
+
+  rocketmq-dashboard:
+      image: apacherocketmq/rocketmq-dashboard:latest
+      container_name: rocketmq-dashboard
+      ports:
+        - 8180:8080
+      environment:
+        - JAVA_OPTS=-Drocketmq.namesrv.addr=rocketmq-namesrv:9876
+        - TZ=Asia/Shanghai
+      depends_on:
+        - rocketmq-namesrv
+      networks:
+        - my-network
+
 
 networks:
   my-network:
