@@ -74,7 +74,11 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
 
         dynamicContext.setGroupBuyActivityDiscountVO(activityDiscountVOFutureTask.get(timeout, TimeUnit.MINUTES));
         dynamicContext.setSkuVO(skuVOFutureTask.get(timeout,TimeUnit.MINUTES));
-        log.info("拼团商品查询试算服务-MarketNode userId:{} 异步线程加载数据「GroupBuyActivityDiscountVO、SkuVO」完成", requestParameter.getUserId());
+
+        log.info("拼团商品查询-MarketNode userId:{} 异步线程加载数据「GroupBuyActivityDiscountVO、SkuVO」完成", requestParameter.getUserId());
+        log.info("拼团商品查询-MarketNode userId:{} dynamicContext:{}", requestParameter.getUserId(), JSON.toJSONString(dynamicContext));
+        log.info("拼团商品查询-MarketNode userId:{} dynamicContext.getGroupBuyActivityDiscountVO():{}", requestParameter.getUserId(), JSON.toJSONString(dynamicContext.getGroupBuyActivityDiscountVO()));
+        log.info("拼团商品查询-MarketNode userId:{} dynamicContext.getSkuVO():{}", requestParameter.getUserId(), JSON.toJSONString(dynamicContext.getSkuVO()));
     }
 
     @Override
@@ -106,6 +110,9 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
 
         dynamicContext.setDeductionPrice(skuVO.getOriginalPrice().subtract(payPrice));
         dynamicContext.setPayPrice(payPrice);
+        log.info("拼团商品查询试算服务-MarketNode dynamicContext.getDeductionPrice():{}", JSON.toJSONString(dynamicContext.getDeductionPrice()));
+        log.info("拼团商品查询试算服务-MarketNode dynamicContext.getPayPrice():{}", JSON.toJSONString(dynamicContext.getPayPrice()));
+
         return router(requestParameter, dynamicContext);
     }
 
