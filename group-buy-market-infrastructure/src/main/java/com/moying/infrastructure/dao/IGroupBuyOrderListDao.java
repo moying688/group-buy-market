@@ -2,6 +2,7 @@ package com.moying.infrastructure.dao;
 
 import com.moying.infrastructure.dao.po.GroupBuyOrderList;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -31,5 +32,6 @@ public interface IGroupBuyOrderListDao {
 
     List<GroupBuyOrderList> queryInProgressUserGroupBuyOrderDetailListByActivityId(Long activityId);
 
-    int queryGroupBuyTeamByUserIdAndTeamId(String userId, String teamId);
+    int queryGroupBuyTeamByUserIdAndTeamId( @Param("userId") String userId,
+                                            @Param("teamId") String teamId);
 }
