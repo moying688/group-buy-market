@@ -112,6 +112,12 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
     @Override
     public StrategyHandler<MarketProductEntity, DefaultActivityStrategyFactory.DynamicContext, TrialBalanceEntity> get(MarketProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) {
         // 不存在配置的拼团活动，走异常节点
+        log.info("进入判断节点");
+        log.info("拼团商品查询试算服务-MarketNode userId:{} requestParameter:{}", requestParameter.getUserId(), JSON.toJSONString(requestParameter));
+        log.info("拼团商品查询试算服务-MarketNode dynamicContext:{}", JSON.toJSONString(dynamicContext));
+        log.info("拼团商品查询试算服务-MarketNode dynamicContext.getGroupBuyActivityDiscountVO():{}", JSON.toJSONString(dynamicContext.getGroupBuyActivityDiscountVO()));
+        log.info("拼团商品查询试算服务-MarketNode dynamicContext.getSkuVO():{}", JSON.toJSONString(dynamicContext.getSkuVO()));
+        log.info("拼团商品查询试算服务-MarketNode dynamicContext.getDeductionPrice():{}", JSON.toJSONString(dynamicContext.getDeductionPrice()));
         if (null == dynamicContext.getGroupBuyActivityDiscountVO() || null == dynamicContext.getSkuVO() || null == dynamicContext.getDeductionPrice()) {
             return errorNode;
         }
