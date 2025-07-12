@@ -1,12 +1,13 @@
 package com.moying.domain.activity.service.trial;
 
+import cn.bugstack.wrench.design.framework.tree.AbstractMultiThreadStrategyRouter;
 import com.moying.domain.activity.adapter.repository.IActivityRepository;
-import com.moying.types.design.framework.tree.AbstractMultiThreadStrategyRouter;
-import com.moying.types.design.framework.tree.AbstractStrategyRouter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @Author: moying
@@ -21,11 +22,11 @@ public abstract class AbstractGroupBuyMarketSupport<MarketProductEntity,DynamicC
         extends AbstractMultiThreadStrategyRouter<MarketProductEntity,DynamicContext,TrialBalanceEntity > {
 
 
-    protected  long timeout = 50;
+    protected  long timeout = 5000;
     @Resource
     protected IActivityRepository activityRepository;
     @Override
-    protected void multiThread(MarketProductEntity requestParameter, DynamicContext dynamicContext) throws Exception{
+    protected void multiThread(MarketProductEntity requestParameter, DynamicContext dynamicContext) throws ExecutionException, InterruptedException, TimeoutException {
 
     }
 }

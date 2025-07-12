@@ -1,6 +1,6 @@
 package com.moying.config;
 
-import com.moying.types.annotations.DCCValue;
+import cn.bugstack.wrench.dynamic.config.center.types.annotations.DCCValue;
 import com.moying.types.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

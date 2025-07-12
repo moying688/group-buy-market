@@ -1,13 +1,13 @@
 package com.moying.domain.trade.service.settlement.factory;
 
+import cn.bugstack.wrench.design.framework.link.model2.LinkArmory;
+import cn.bugstack.wrench.design.framework.link.model2.chain.BusinessLinkedList;
 import com.moying.domain.activity.model.entity.MarketProductEntity;
 import com.moying.domain.trade.model.entity.*;
 import com.moying.domain.trade.service.settlement.filter.EndRuleFilter;
 import com.moying.domain.trade.service.settlement.filter.OutTradeNoRuleFilter;
 import com.moying.domain.trade.service.settlement.filter.SCRuleFilter;
 import com.moying.domain.trade.service.settlement.filter.SettableRuleFilter;
-import com.moying.types.design.framework.link.model2.LinkArmory;
-import com.moying.types.design.framework.link.model2.chain.BusinessLinkedList;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,14 +28,14 @@ public class TradeSettlementRuleFilterFactory {
 
     @Bean("tradeSettlementRuleFilter")
     public BusinessLinkedList<TradeSettlementRuleCommandEntity,
-            TradeSettlementRuleFilterFactory.DynamicContext, TradeSettlementRuleFilterBackEntity> tradeSettlementRuleFilter(
+                DynamicContext, TradeSettlementRuleFilterBackEntity> tradeSettlementRuleFilter(
             SCRuleFilter scRuleFilter,
             OutTradeNoRuleFilter outTradeNoRuleFilter,
             SettableRuleFilter settableRuleFilter,
             EndRuleFilter endRuleFilter) {
 
         // 组装链
-        LinkArmory<TradeSettlementRuleCommandEntity, TradeSettlementRuleFilterFactory.DynamicContext, TradeSettlementRuleFilterBackEntity> linkArmory =
+        LinkArmory<TradeSettlementRuleCommandEntity, DynamicContext, TradeSettlementRuleFilterBackEntity> linkArmory =
                 new LinkArmory<>("交易结算规则过滤链", scRuleFilter, outTradeNoRuleFilter, settableRuleFilter, endRuleFilter);
 
         // 链对象

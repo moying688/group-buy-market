@@ -34,6 +34,9 @@ public class GroupBuyNotifyJob {
         // 多个实例都会执行该任务，防止并发问题，使用分布式锁
         RLock lock = redissonClient.getLock("group_buy_market_notify_job_exec");
         try {
+            // waitTime：等待获取锁的最长时间
+            // leaseTime：租约时间，如果当前线程成功获取到锁，那么锁将被持有的时间长度。
+            // 这个时间过后，锁会自动释放。续租时间可按照执行方法时间的耗时max来设置。如 50毫秒
             boolean isLocked = lock.tryLock(3, 0, TimeUnit.SECONDS);
             if (!isLocked) return; // 未获取到锁，直接返回
             Map<String, Integer> result = tradeSettlementOrderService.execSettlementNotifyJob();

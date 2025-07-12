@@ -1,6 +1,6 @@
 package com.moying.infrastructure.dcc;
 
-import com.moying.types.annotations.DCCValue;
+import cn.bugstack.wrench.dynamic.config.center.types.annotations.DCCValue;
 import com.moying.types.common.Constants;
 import org.springframework.stereotype.Service;
 

@@ -1,5 +1,6 @@
 package com.moying.domain.activity.service.trial.node;
 
+import cn.bugstack.wrench.design.framework.tree.StrategyHandler;
 import com.alibaba.fastjson.JSON;
 import com.moying.domain.activity.model.entity.MarketProductEntity;
 import com.moying.domain.activity.model.entity.TrialBalanceEntity;
@@ -7,7 +8,6 @@ import com.moying.domain.activity.model.valobj.GroupBuyActivityDiscountVO;
 import com.moying.domain.activity.model.valobj.SkuVO;
 import com.moying.domain.activity.service.trial.AbstractGroupBuyMarketSupport;
 import com.moying.domain.activity.service.trial.factory.DefaultActivityStrategyFactory;
-import com.moying.types.design.framework.tree.StrategyHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

@@ -1,12 +1,12 @@
 package com.moying.domain.activity.service.trial.node;
 
+import cn.bugstack.wrench.design.framework.tree.StrategyHandler;
 import com.moying.domain.activity.model.entity.MarketProductEntity;
 import com.moying.domain.activity.model.entity.TrialBalanceEntity;
 import com.moying.domain.activity.model.valobj.GroupBuyActivityDiscountVO;
 import com.moying.domain.activity.service.trial.AbstractGroupBuyMarketSupport;
 import com.moying.domain.activity.service.trial.factory.DefaultActivityStrategyFactory;
 import com.moying.domain.tags.service.TagService;
-import com.moying.types.design.framework.tree.StrategyHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;

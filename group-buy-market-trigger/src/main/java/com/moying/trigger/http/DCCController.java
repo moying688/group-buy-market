@@ -1,5 +1,6 @@
 package com.moying.trigger.http;
 
+import cn.bugstack.wrench.dynamic.config.center.domain.model.valobj.AttributeVO;
 import com.moying.api.IDCCService;
 import com.moying.api.response.Response;
 import com.moying.types.enums.ResponseCode;
@@ -39,7 +40,7 @@ public class DCCController implements IDCCService {
     public Response<Boolean> updateConfig(@RequestParam String key, @RequestParam String value) {
         try {
             log.info("DCC 动态配置值变更 key:{} value:{}", key, value);
-            dccTopic.publish(key + "," + value);
+            dccTopic.publish(new AttributeVO(key,value));
             return Response.<Boolean>builder()
                     .code(ResponseCode.SUCCESS.getCode())
                     .info(ResponseCode.SUCCESS.getInfo())

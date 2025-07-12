@@ -157,8 +157,6 @@ public class TradeRepository implements ITradeRepository {
                 .build();
     }
 
-
-
     @Override
     public MarketPayOrderEntity queryMarketPayOrderEntityByOutTradeNo(String userId, String outTradeNo) {
         GroupBuyOrderList groupBuyOrderListReq = new GroupBuyOrderList();
@@ -213,6 +211,7 @@ public class TradeRepository implements ITradeRepository {
         GroupBuyOrderList groupBuyOrderList = new GroupBuyOrderList();
         groupBuyOrderList.setActivityId(activityId);
         groupBuyOrderList.setUserId(userId);
+
         return groupBuyOrderListDao.queryOrderCountByActivityId(groupBuyOrderList);
     }
 

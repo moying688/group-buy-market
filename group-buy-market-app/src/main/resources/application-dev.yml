@@ -78,6 +78,14 @@ redis:
       ping-interval: 60000
       keep-alive: true
 
+# 扳手工程；通用配置组件「配置中心、设计模式框架、限流服务」
+xfg:
+  wrench:
+    config:
+      system: group-buy-market
+      register:
+        host: localhost
+        port: 6379
 
 # MyBatis 配置【如需使用记得打开】
 mybatis:

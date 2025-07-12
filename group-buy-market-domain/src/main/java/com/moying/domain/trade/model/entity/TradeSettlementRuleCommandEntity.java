@@ -1,7 +1,6 @@
 package com.moying.domain.trade.model.entity;
 
 import com.moying.domain.trade.service.settlement.factory.TradeSettlementRuleFilterFactory;
-import com.moying.types.design.framework.link.model2.handler.ILogicHandler;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

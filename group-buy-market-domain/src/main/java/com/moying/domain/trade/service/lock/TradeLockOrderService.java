@@ -1,12 +1,12 @@
 package com.moying.domain.trade.service.lock;
 
+import cn.bugstack.wrench.design.framework.link.model2.chain.BusinessLinkedList;
 import com.moying.domain.trade.adapter.repository.ITradeRepository;
 import com.moying.domain.trade.model.aggregate.GroupBuyOrderAggregate;
 import com.moying.domain.trade.model.entity.*;
 import com.moying.domain.trade.model.valobj.GroupBuyProgressVO;
 import com.moying.domain.trade.service.ITradeLockOrderService;
 import com.moying.domain.trade.service.lock.factory.TradeLockRuleFilterFactory;
-import com.moying.types.design.framework.link.model2.chain.BusinessLinkedList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +28,7 @@ public class TradeLockOrderService implements ITradeLockOrderService {
 
     @Resource
     private BusinessLinkedList<TradeLockRuleCommandEntity,
-            TradeLockRuleFilterFactory.DynamicContext, TradeLockRuleFilterBackEntity> tradeRuleFilter;
+                TradeLockRuleFilterFactory.DynamicContext, TradeLockRuleFilterBackEntity> tradeRuleFilter;
 
     @Override
     public MarketPayOrderEntity queryNoPayMarketPayOrderByOutTradeNo(String userId, String outTradeNo) {
@@ -62,7 +62,7 @@ public class TradeLockOrderService implements ITradeLockOrderService {
                 .userTakeOrderCount(tradeLockRuleFilterBackEntity.getUserTakeOrderCount())
                 .build();
 
-        // 锁定营销支付订单 - 这会用户只是下单还没有支付。后续会有2个流程；支付成功、超时未支付（回退）
+        // 锁定营销支付订单 - 这会用户只是下单还没有支付。todo 后续会有2个流程；支付成功、超时未支付（回退）
        try{
            return tradeRepository.lockMarketPayOrder(groupBuyOrderAggregate);
        }catch (Exception e){
