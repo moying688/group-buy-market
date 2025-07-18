@@ -146,6 +146,12 @@
                 <version>2.2.0</version>
             </dependency>
 
+            <!-- 上报日志 ELK -->
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>7.3</version>
+            </dependency>
             <!--  扳手工程pom -->
             <dependency>
                 <groupId>cn.bugstack.wrench</groupId>

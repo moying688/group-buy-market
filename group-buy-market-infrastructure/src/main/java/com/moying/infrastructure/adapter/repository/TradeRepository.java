@@ -370,7 +370,6 @@ public class TradeRepository implements ITradeRepository {
         long occupy  = redisService.incr(teamStockKey) + 1;
 
         if(occupy > target + recoveryCount){
-//            redisService.setAtomicLong(teamStockKey, target);
             return false;
         }
         // 给每个产生的值加锁为兜底设计
