@@ -17,7 +17,7 @@ spring:
   datasource:
     username: root
     password: root
-    url: jdbc:mysql://127.0.0.1:3306/group_buy_market?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai&useSSL=true
+    url: jdbc:mysql://117.72.219.70/group_buy_market?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai&useSSL=true
     driver-class-name: com.mysql.cj.jdbc.Driver
   hikari:
     pool-name: Retail_HikariCP
@@ -37,7 +37,7 @@ mybatis:
 redis:
   sdk:
     config:
-      host: localhost
+      host: 117.72.219.70
       port: 6379
       pool-size: 10
       min-idle-size: 5
@@ -48,6 +48,37 @@ redis:
       ping-interval: 60000
       keep-alive: true
 
+# RocketMQ 配置
+rocketmq:
+  name-server: 117.72.219.70:9876
+  #  consumer:
+  #    group: group_buy_team_success_consumer
+  #    # 一次拉取消息最大值，注意是拉取消息的最大值而非消费最大值
+  #    pull-batch-size: 10
+  #    # topic
+  #    topic: group_team_success_topic
+  producer:
+    # 发送同一类消息的设置为同一个group，保证唯一
+    group: group_buy_team_success_producer
+    # 发送消息超时时间，默认3000
+    sendMessageTimeout: 10000
+    # 发送消息失败重试次数，默认2
+    retryTimesWhenSendFailed: 5
+    # 异步消息重试次数，默认2
+    retryTimesWhenSendAsyncFailed: 5
+    # 消息最大长度，默认1024 * 1024 * 4(默认4M)
+    maxMessageSize: 4096
+    # 压缩消息阈值，默认4k(1024 * 4)
+    compressMessageBodyThreshold: 4096
+    # 是否在内部发送失败时重试另一个broker，默认false
+    retryNextServer: false
+    # 刷盘策略，默认ASYNC(异步刷盘)
+    enableMsgTrace: false
+
+mq:
+  producer:
+    topic:
+      team-success: group_team_success_topic
 
 # 日志
 logging:
