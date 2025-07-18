@@ -1,0 +1,198 @@
+version: '3.8'
+
+services:
+
+  nginx:
+    image: registry.cn-hangzhou.aliyuncs.com/xfg-studio/nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx/html:/usr/share/nginx/html
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf/conf.d:/etc/nginx/conf.d
+    privileged: true
+    networks:
+      - my-network
+
+  moying-pay-mall-app:
+    image: moying/moying-pay-mall-app:2.0
+    container_name: moying-pay-mall-app
+    restart: on-failure
+    ports:
+      - "9091:8080"
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m -XX:+UseSerialGC
+      - TZ=PRC
+      - SERVER_PORT=8080
+      - APP_CONFIG_GROUP_BUY_MARKET_API_URL=http://117.72.219.70
+      - APP_CONFIG_GROUP_BUY_MARKET_NOTIFY_URL=http://117.72.219.70/api/v1/alipay/group_buy_notify
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=b8B6llKKoo00oo00Il__
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/s-pay-mall-ddd-market?serverTimezone=UTC&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Shanghai
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+      - SPRING_HIKARI_POOL_NAME=Retail_HikariCP
+      - WEIXIN_CONFIG_ORIGINALID=gh_46ed3bee98b8
+      - WEIXIN_CONFIG_TOKEN=b8b6
+      - WEIXIN_CONFIG_APP_ID=wx93e7039a100120c8
+      - WEIXIN_CONFIG_APP_SECRET=2ce18079942e191ee5fdb11c41656b8e
+      - WEIXIN_CONFIG_TEMPLATE_ID=RbEZ2jo47dQmF4A7_Ku7RsDy1x_5by6bk1Ox6rPCl4Y
+      - ALIPAY_NOTIFY_URL=http://moying.natapp1.cc/api/v1/alipay/alipay_notify_url
+      - ALIPAY_RETURN_URL=http://117.72.219.70
+      - REDIS_SDK_CONFIG_HOST=redis
+      - REDIS_SDK_CONFIG_PORT=6379
+      - ROCKETMQ_NAME_SERVER=rocketmq-namesrv:9876
+      - ROCKETMQ_PRODUCER_GROUP=pay_mall_success_producer
+    volumes:
+      - ./log:/data/log
+    deploy:
+      resources:
+        limits:
+          memory: 800M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - my-network
+
+  group-buy-market:
+    image: moying/group-buy-market-app:2.0
+    container_name: group-buy-market-app
+    restart: on-failure
+    ports:
+      - "8091:8091"
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m -XX:+UseSerialGC
+      - TZ=PRC
+      - SERVER_PORT=8091
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=b8B6llKKoo00oo00Il__
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/group_buy_market?serverTimezone=UTC&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Shanghai
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+      - SPRING_HIKARI_POOL_NAME=Retail_HikariCP
+      - REDIS_SDK_CONFIG_HOST=redis
+      - REDIS_SDK_CONFIG_PORT=6379
+      - ROCKETMQ_NAME_SERVER=rocketmq-namesrv:9876
+      - ROCKETMQ_PRODUCER_GROUP=group_buy_team_success_producer
+    volumes:
+      - ./log:/data/log
+    deploy:
+      resources:
+        limits:
+          memory: 800M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - my-network
+
+  mysql:
+    image: registry.cn-hangzhou.aliyuncs.com/xfg-studio/mysql:8.0.32
+    container_name: mysql
+    command: --default-authentication-plugin=mysql_native_password --innodb_buffer_pool_size=128M
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: b8B6llKKoo00oo00Il__
+    ports:
+      - "13306:3306"
+    volumes:
+      - ./mysql/my.cnf:/etc/mysql/conf.d/mysql.cnf:ro
+      - ./mysql/sql:/docker-entrypoint-initdb.d
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 15s
+    networks:
+      - my-network
+
+  redis:
+    image: registry.cn-hangzhou.aliyuncs.com/xfg-studio/redis:6.2
+    container_name: redis-buy
+    restart: always
+    hostname: redis
+    privileged: true
+    ports:
+      - 26379:6379
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf --maxmemory 128mb
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - my-network
+
+  rocketmq-namesrv:
+    image: apache/rocketmq:5.1.3
+    container_name: rocketmq-namesrv
+    ports:
+      - 9876:9876
+    command: sh mqnamesrv
+    volumes:
+      - ./rocketmq/namesrv/logs:/home/rocketmq/logs
+      - ./rocketmq/namesrv/store:/home/rocketmq/store
+    environment:
+      - JAVA_OPT_EXT=-Xms128m -Xmx256m -Xmn128m
+      - TZ=Asia/Shanghai
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9876" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - my-network
+
+  rocketmq-broker:
+    image: apache/rocketmq:5.1.3
+    container_name: rocketmq-broker
+    depends_on:
+      - rocketmq-namesrv
+    ports:
+      - 10909:10909
+      - 10911:10911
+      - 10912:10912
+    command: sh mqbroker -n rocketmq-namesrv:9876 -c /home/rocketmq/conf/broker.conf
+    volumes:
+      - ./rocketmq/broker/broker.conf:/home/rocketmq/conf/broker.conf
+      - ./rocketmq/broker/store:/home/rocketmq/store
+    environment:
+      - JAVA_OPT_EXT=-Xms256m -Xmx512m -Xmn256m
+      - TZ=Asia/Shanghai
+    networks:
+      - my-network
+
+  rocketmq-dashboard:
+      image: apacherocketmq/rocketmq-dashboard:latest
+      container_name: rocketmq-dashboard
+      ports:
+        - 8180:8080
+      environment:
+        - JAVA_OPTS=-Drocketmq.namesrv.addr=rocketmq-namesrv:9876
+        - TZ=Asia/Shanghai
+      depends_on:
+        - rocketmq-namesrv
+      networks:
+        - my-network
+
+
+networks:
+  my-network:
+    driver: bridge
