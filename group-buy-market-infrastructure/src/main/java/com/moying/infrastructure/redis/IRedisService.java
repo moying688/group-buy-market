@@ -15,6 +15,23 @@ import java.util.concurrent.TimeUnit;
  */
 public interface IRedisService {
 
+
+    /**
+     * pop 队列
+     *
+     * @param key 键
+     * @return 队列
+     */
+    public <T> T lPop(String key);
+
+    /**
+     * push 队列
+     *
+     * @param key   键
+     * @param value 值
+     */
+    public <T> void rPush(String key, T value) ;
+
     /**
      * 设置指定 key 的值
      *

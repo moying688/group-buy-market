@@ -29,6 +29,7 @@ import com.moying.types.exception.AppException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RBlockingQueue;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Repository;
@@ -362,36 +363,35 @@ public class TradeRepository implements ITradeRepository {
     }
 
     @Override
-    public boolean occupyTeamStock(String teamStockKey, String recoveryTeamStockKey, Integer target, Integer validTime) {
-        // 失败恢复量
-        Long recoveryCount = redisService.getAtomicLong(recoveryTeamStockKey);
-        recoveryCount = recoveryCount == null ? 0 : recoveryCount;
+    public boolean occupyTeamStock(String teamStockKey, String recoveryTeamStockKey,String userLockKey, Integer target, Integer validTime) {
+       // 用户幂等处理
+        Boolean userLock = redisService.setNx(userLockKey, validTime + 60, TimeUnit.MINUTES);
+        if (!userLock) return false;
 
-        // incr得到当前库存宇总量与恢复量做对比
-        // 因为是有队伍后才会进入到抢占队伍名额，所以需要额外+1
-        long occupy  = redisService.incr(teamStockKey) + 1;
 
-        if(occupy > target + recoveryCount){
-            return false;
+        // 先从队列中获取恢复 量
+        Integer recoveryCount = redisService.lPop(recoveryTeamStockKey);
+
+        if(recoveryCount == null){
+            long occupy  = redisService.incr(teamStockKey) + 1;
+            if(occupy > target){
+                return false;
+            }
         }
-        // 给每个产生的值加锁为兜底设计
-        // validTime + 60分钟 让数据保留时间稍微长一些，便于排查问题。
-        String lockKey = teamStockKey + Constants.UNDERLINE + occupy;
-        Boolean lock = redisService.setNx(lockKey, validTime + 60, TimeUnit.MINUTES);
-
-        if (!lock) {
-            log.info("组队库存加锁失败 {}", lockKey);
-        }
-
-        return lock;
+        // todo 特殊情况再采用锁兜底
+        return true;
     }
 
     @Override
     public void recoveryTeamStock(String recoveryTeamStockKey, Integer validTime) {
         // 首次组队拼团，是没有 teamId 的，所以不需要这个做处理。
         if (StringUtils.isBlank(recoveryTeamStockKey)) return;
+        redisService.rPush(recoveryTeamStockKey,1);
+    }
 
-        redisService.incr(recoveryTeamStockKey);
+    @Override
+    public void unLockUserLock(String userLockKey) {
+         redisService.remove(userLockKey);
     }
 
     @Override

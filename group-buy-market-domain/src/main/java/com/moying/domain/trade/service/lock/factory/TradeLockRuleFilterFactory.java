@@ -27,14 +27,13 @@ import org.springframework.stereotype.Service;
 public class TradeLockRuleFilterFactory {
 
 
-
     @Bean("tradeRuleFilter")
     public BusinessLinkedList<TradeLockRuleCommandEntity, DynamicContext, TradeLockRuleFilterBackEntity>
-        tradeRuleFilter(ActivityUsabilityRuleFilter activityUsabilityRuleFilter, UserTakeLimitRuleFilter userTakeLimitRuleFilter
-    , TeamStockOccupyRuleFilter teamStockOccupyRuleFilter){
+    tradeRuleFilter(ActivityUsabilityRuleFilter activityUsabilityRuleFilter, UserTakeLimitRuleFilter userTakeLimitRuleFilter
+            , TeamStockOccupyRuleFilter teamStockOccupyRuleFilter) {
         // 组装链
         LinkArmory<TradeLockRuleCommandEntity, DynamicContext, TradeLockRuleFilterBackEntity>
-                linkArmory = new LinkArmory<>("交易规则过滤链", activityUsabilityRuleFilter, userTakeLimitRuleFilter,teamStockOccupyRuleFilter);
+                linkArmory = new LinkArmory<>("交易规则过滤链", activityUsabilityRuleFilter, userTakeLimitRuleFilter, teamStockOccupyRuleFilter);
         return linkArmory.getLogicLink();
     }
 
@@ -42,7 +41,7 @@ public class TradeLockRuleFilterFactory {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class DynamicContext{
+    public static class DynamicContext {
 
         private String teamStockKey = "group_buy_market_team_stock_key_";
 
@@ -58,6 +57,11 @@ public class TradeLockRuleFilterFactory {
         public String generateRecoveryTeamStockKey(String teamId) {
             if (StringUtils.isBlank(teamId)) return null;
             return teamStockKey + groupBuyActivity.getActivityId() + "_" + teamId + "_recovery";
+        }
+
+        public String generateUserLockKey(String userId, String teamId) {
+            if (StringUtils.isBlank(userId)) return null;
+            return "group_buy_market_user_lock_key_" + groupBuyActivity.getActivityId() + "_" + teamId + "_" + userId;
         }
 
     }

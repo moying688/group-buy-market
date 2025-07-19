@@ -10,9 +10,10 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 /**
+ * 待退款订单策略(未支付，未成团)
  * @Author: moying
  * @CreateTime: 2025-07-19
- * @Description: 待退款订单策略(未支付，未成团)
+ *
  */
 
 

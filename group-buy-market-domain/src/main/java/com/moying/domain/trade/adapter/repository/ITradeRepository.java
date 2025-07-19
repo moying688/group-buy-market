@@ -125,11 +125,12 @@ public interface ITradeRepository {
      * 占用团购团队库存
      * @param teamStockKey 团购团队库存键
      * @param recoveryTeamStockKey 团购团队库存恢复键
+     * @param userLockKey 用户锁键
      * @param target 目标数量
      * @param validTime 有效时间
      * @return true: 占用成功 false: 占用失败
      */
-    boolean occupyTeamStock(String teamStockKey, String recoveryTeamStockKey, Integer target, Integer validTime);
+    boolean occupyTeamStock(String teamStockKey, String recoveryTeamStockKey,String userLockKey, Integer target, Integer validTime);
 
     /**
      * 团购团队库存恢复
@@ -138,6 +139,12 @@ public interface ITradeRepository {
      */
     void recoveryTeamStock(String recoveryTeamStockKey, Integer validTime);
 
+
+    /**
+     * 解锁用户锁
+     * @param userLockKey 用户锁键
+     */
+    void unLockUserLock(String userLockKey);
     /**
      * 待退款订单聚合(未成团 未支付)
      * @param groupBuyRefundAggregate 待退款订单聚合

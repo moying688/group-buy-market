@@ -14,9 +14,6 @@ import javax.annotation.Resource;
 
 /**
  * 逆向流程单测
- *
- * @author xiaofuge bugstack.cn @小傅哥
- * 2025/7/12 09:07
  */
 @Slf4j
 @RunWith(SpringRunner.class)

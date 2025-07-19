@@ -17,6 +17,16 @@ public class RedissonService implements IRedisService {
     @Resource
     private RedissonClient redissonClient;
 
+    public <T> T lPop(String key) {
+        RQueue<T> queue = redissonClient.<T>getQueue(key);
+        if(queue==null || queue.isEmpty()){
+            return null;
+        }
+        return queue.poll();
+    }
+    public <T> void rPush(String key, T value) {
+        redissonClient.<T>getQueue(key).add(value);
+    }
     public <T> void setValue(String key, T value) {
         redissonClient.<T>getBucket(key).set(value);
     }
