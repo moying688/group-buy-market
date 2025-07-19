@@ -5,6 +5,8 @@ import com.moying.domain.trade.adapter.repository.ITradeRepository;
 import com.moying.domain.trade.model.aggregate.GroupBuyOrderAggregate;
 import com.moying.domain.trade.model.aggregate.GroupBuyTeamSettlementAggregate;
 import com.moying.domain.trade.model.entity.*;
+import com.moying.domain.trade.model.aggregate.GroupBuyRefundAggregate;
+import com.moying.domain.trade.model.entity.TradeRefundOrderEntity;
 import com.moying.domain.trade.model.valobj.GroupBuyProgressVO;
 import com.moying.domain.trade.model.valobj.NotifyConfigVO;
 import com.moying.domain.trade.model.valobj.NotifyTypeEnumVO;
@@ -238,7 +240,7 @@ public class TradeRepository implements ITradeRepository {
     }
 
     @Override
-    @Transactional(timeout = 500)
+    @Transactional(timeout = 5000)
     public NotifyTaskEntity settlementMarketPayOrder(GroupBuyTeamSettlementAggregate groupBuyTeamSettlementAggregate) {
         UserEntity userEntity = groupBuyTeamSettlementAggregate.getUserEntity();
         GroupBuyTeamEntity groupBuyTeamEntity = groupBuyTeamSettlementAggregate.getGroupBuyTeamEntity();
@@ -390,5 +392,38 @@ public class TradeRepository implements ITradeRepository {
         if (StringUtils.isBlank(recoveryTeamStockKey)) return;
 
         redisService.incr(recoveryTeamStockKey);
+    }
+
+    @Override
+    @Transactional(timeout = 5000)
+    public void unpaid2Refund(GroupBuyRefundAggregate groupBuyRefundAggregate) {
+        TradeRefundOrderEntity tradeRefundOrderEntity = groupBuyRefundAggregate.getTradeRefundOrderEntity();
+        GroupBuyProgressVO groupBuyProgressVO = groupBuyRefundAggregate.getGroupBuyProgressVO();
+
+        // 更新用户订单明细
+        GroupBuyOrderList groupBuyOrderListReq = new GroupBuyOrderList();
+        groupBuyOrderListReq.setUserId(tradeRefundOrderEntity.getUserId());
+        groupBuyOrderListReq.setOrderId(tradeRefundOrderEntity.getOrderId());
+
+        int updateUnpaid2RefundCount = groupBuyOrderListDao.unpaid2Refund(groupBuyOrderListReq);
+        if (1 != updateUnpaid2RefundCount) {
+            log.error("逆向流程，更新订单状态(退单)失败 {} {}", tradeRefundOrderEntity.getUserId(), tradeRefundOrderEntity.getOrderId());
+            throw new AppException(ResponseCode.UPDATE_ZERO);
+        }
+
+
+        // 更新拼团订单
+        GroupBuyOrder groupBuyOrderReq = new GroupBuyOrder();
+        groupBuyOrderReq.setTeamId(tradeRefundOrderEntity.getTeamId());
+        groupBuyOrderReq.setLockCount(groupBuyProgressVO.getLockCount());
+
+        int updateTeamUnpaid2Refund = groupBuyOrderDao.unpaid2Refund(groupBuyOrderReq);
+        if (1 != updateTeamUnpaid2Refund) {
+            log.error("逆向流程，更新组队记录(退单)失败 {} {}", tradeRefundOrderEntity.getUserId(), tradeRefundOrderEntity.getOrderId());
+            throw new AppException(ResponseCode.UPDATE_ZERO);
+        }
+
+        // todo 退单后，不仅要修改数据库，还要对redis recoveryCount 进行恢复，后续统一处理
+
     }
 }

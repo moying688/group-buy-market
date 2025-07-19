@@ -15,6 +15,7 @@ import com.moying.domain.trade.model.entity.*;
 import com.moying.domain.trade.model.valobj.GroupBuyProgressVO;
 import com.moying.domain.trade.model.valobj.NotifyConfigVO;
 import com.moying.domain.trade.model.valobj.NotifyTypeEnumVO;
+import com.moying.domain.trade.model.valobj.TradeOrderStatusEnumVO;
 import com.moying.domain.trade.service.ITradeLockOrderService;
 import com.moying.domain.trade.service.ITradeSettlementOrderService;
 import com.moying.types.enums.ResponseCode;
@@ -78,7 +79,7 @@ public class MarketTradeController implements IMarketTradeService {
 
             // 查询 outTradeNo 是否已经存在交易记录
             MarketPayOrderEntity marketPayOrderEntity = tradeOrderService.queryNoPayMarketPayOrderByOutTradeNo(userId, outTradeNo);
-            if (null != marketPayOrderEntity) {
+            if (null != marketPayOrderEntity && TradeOrderStatusEnumVO.CREATE.equals(marketPayOrderEntity.getTradeOrderStatusEnumVO())) {
                 // 已经存在交易记录 - 直接返回
                 LockMarketPayOrderResponseDTO lockMarketPayOrderResponseDTO = LockMarketPayOrderResponseDTO.builder()
                         .orderId(marketPayOrderEntity.getOrderId())

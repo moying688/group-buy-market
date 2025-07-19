@@ -40,9 +40,16 @@ public interface ITradeLockOrderService {
      * @param payActivityEntity 拼团，支付活动实体对象
      * @param payDiscountEntity 拼团，支付优惠实体对象
      * @return 拼团，预购订单营销实体对象
+     * @throws Exception 锁定失败
      */
     MarketPayOrderEntity lockMarketPayOrder(UserEntity userEntity, PayActivityEntity payActivityEntity, PayDiscountEntity payDiscountEntity) throws Exception;
 
 
+    /**
+     * 查询，用户是否参与过该拼团
+     * @param userId  用户ID
+     * @param teamId  拼团ID
+     * @return 是否参与过该拼团
+     */
     boolean queryGroupBuyTeamByUserIdAndTeamId(String userId, String teamId);
 }

@@ -9,7 +9,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * @description 用户拼单
+ * @author moying
+ * @description 拼团订单
  */
 @Data
 @Builder
