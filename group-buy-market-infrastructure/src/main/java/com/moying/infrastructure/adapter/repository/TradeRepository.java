@@ -423,6 +423,15 @@ public class TradeRepository implements ITradeRepository {
             throw new AppException(ResponseCode.UPDATE_ZERO);
         }
 
+        // 如果团队锁单锁单数量为0，则取消删除该拼团
+       GroupBuyOrder groupBuyOrder = groupBuyOrderDao.queryGroupBuyTeamByTeamId(tradeRefundOrderEntity.getTeamId());
+        if (groupBuyOrder.getLockCount() == 0) {
+            int cancelTeamCount = groupBuyOrderDao.cancelTeam(tradeRefundOrderEntity.getTeamId());
+            if (1 != cancelTeamCount) {
+                log.error("逆向流程，取消组队失败 {} {}", tradeRefundOrderEntity.getUserId(), tradeRefundOrderEntity.getOrderId());
+//                throw new AppException(ResponseCode.UPDATE_ZERO);
+            }
+        }
         // todo 退单后，不仅要修改数据库，还要对redis recoveryCount 进行恢复，后续统一处理
 
     }
