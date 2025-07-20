@@ -5,6 +5,7 @@ import com.moying.domain.trade.model.entity.*;
 import com.moying.domain.trade.model.valobj.RefundTypeEnumVO;
 import com.moying.domain.trade.model.valobj.TradeOrderStatusEnumVO;
 import com.moying.domain.trade.service.ITradeRefundOrderService;
+import com.moying.domain.trade.service.lock.factory.TradeLockRuleFilterFactory;
 import com.moying.domain.trade.service.refund.business.IRefundOrderStrategy;
 import com.moying.types.enums.GroupBuyOrderEnumVO;
 import lombok.extern.slf4j.Slf4j;
@@ -67,6 +68,11 @@ public class TradeRefundOrderService implements ITradeRefundOrderService {
                 .teamId(teamId)
                 .activityId(groupBuyTeamEntity.getActivityId())
                 .build());
+
+        // todo 对redis库存进行恢复
+        // 通过策略模式，对三种情况分开讨论，已经成团的就不需要恢复
+        TradeLockRuleFilterFactory.DynamicContext dynamicContext = new TradeLockRuleFilterFactory.DynamicContext();
+        tradeRepository.recoveryTeamStock(dynamicContext.generateRecoveryTeamStockKey(teamId),60);
 
         return TradeRefundBehaviorEntity.builder()
                 .userId(tradeRefundCommandEntity.getUserId())
