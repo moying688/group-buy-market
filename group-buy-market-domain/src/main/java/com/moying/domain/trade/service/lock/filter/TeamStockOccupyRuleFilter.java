@@ -42,10 +42,13 @@ public class TeamStockOccupyRuleFilter implements ILogicHandler<TradeLockRuleCom
         Integer validTime = groupBuyActivity.getValidTime();
         String teamStockKey = dynamicContext.generateTeamStockKey(teamId);
         String recoveryTeamStockKey = dynamicContext.generateRecoveryTeamStockKey(teamId);
+        String userLockKey = dynamicContext.generateUserLockKey(requestParameter.getUserId(), teamId);
 
-        boolean status = repository.occupyTeamStock(teamStockKey, recoveryTeamStockKey, target, validTime);
+        boolean status = repository.occupyTeamStock(teamStockKey, recoveryTeamStockKey,userLockKey, target, validTime);
 
         if (!status) {
+            // 释放用户幂等锁
+            repository.unLockUserLock(userLockKey);
             log.warn("交易规则过滤-组队库存校验{} activityId:{} 抢占失败:{}", requestParameter.getUserId(), requestParameter.getActivityId(), teamStockKey);
             throw new AppException(ResponseCode.E0008);
         }

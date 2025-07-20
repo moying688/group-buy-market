@@ -15,9 +15,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public enum TradeOrderStatusEnumVO {
 
+
+    /**
+     * 创建
+     */
     CREATE(0, "初始创建"),
+    /**
+     * 完成
+     */
     COMPLETE(1, "消费完成"),
-    CLOSE(2, "超时关单"),
+    /**
+     * 关闭
+     */
+    CLOSE(2, "用户退单"),
     ;
 
     private Integer code;

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 /**
  * @Author: moying
  * @CreateTime: 2025-05-13
- * @Description:
+ * @Description: 通知任务实体
  */
 
 @Data

@@ -66,10 +66,17 @@ rocketmq:
     # 刷盘策略，默认ASYNC(异步刷盘)
     enableMsgTrace: false
 
+
 mq:
   producer:
     topic:
       team-success: group_team_success_topic
+      team-refund: group_team_refund_topic
+  consumer:
+    group:
+      team-success: group_buy_team_success_consumer
+      team-refund: group_buy_team_refund_consumer
+
 
 
 # Redis

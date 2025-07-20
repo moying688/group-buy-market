@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 /**
  * @Author: moying
  * @CreateTime: 2025-05-27
- * @Description:
+ * @Description: 事件发布者
  */
 
 @Slf4j

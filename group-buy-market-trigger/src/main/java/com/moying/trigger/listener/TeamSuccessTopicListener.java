@@ -17,9 +17,12 @@ import javax.annotation.PostConstruct;
  * @CreateTime: 2025-05-27
  * @Description:
  */
-
-@RocketMQMessageListener(topic = "group_team_success_topic",
-        consumerGroup = "group_buy_team_success_consumer",
+//mq:
+//  producer:
+//    topic:
+//      team-success:
+@RocketMQMessageListener(topic = "${mq.producer.topic.team-success}",
+        consumerGroup = "${mq.consumer.group.team-success}",
         messageModel = MessageModel.BROADCASTING)
 @Component
 @Slf4j
@@ -28,10 +31,13 @@ public class TeamSuccessTopicListener implements RocketMQListener<String> {
 
     @Value("${server.port}")
     private String serverPort;
+
+    @Value("${mq.producer.topic.team-success}")
+    private String test;
     @Override
     public void onMessage(String message) {
 
-        log.info("拼团完成，接收消息：{}", message);
+        log.info("接收消息（组队成功）:{}", message);
     }
 
 //    @Override
