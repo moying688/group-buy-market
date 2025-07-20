@@ -107,4 +107,11 @@ public interface IGroupBuyOrderDao {
      * @return 取消团购数量
      */
     int cancelTeam(String teamId);
+
+    /**
+     * 订单退款
+     * @param groupBuyOrderReq 退款订单
+     * @return 退款订单数量
+     */
+    int paid2Refund(GroupBuyOrder groupBuyOrderReq);
 }
