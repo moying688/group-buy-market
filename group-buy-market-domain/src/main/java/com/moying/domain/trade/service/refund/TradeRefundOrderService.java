@@ -3,9 +3,9 @@ package com.moying.domain.trade.service.refund;
 import com.moying.domain.trade.adapter.repository.ITradeRepository;
 import com.moying.domain.trade.model.entity.*;
 import com.moying.domain.trade.model.valobj.RefundTypeEnumVO;
+import com.moying.domain.trade.model.valobj.TeamRefundSuccess;
 import com.moying.domain.trade.model.valobj.TradeOrderStatusEnumVO;
 import com.moying.domain.trade.service.ITradeRefundOrderService;
-import com.moying.domain.trade.service.lock.factory.TradeLockRuleFilterFactory;
 import com.moying.domain.trade.service.refund.business.IRefundOrderStrategy;
 import com.moying.types.enums.GroupBuyOrderEnumVO;
 import lombok.extern.slf4j.Slf4j;
@@ -70,16 +70,24 @@ public class TradeRefundOrderService implements ITradeRefundOrderService {
                 .activityId(groupBuyTeamEntity.getActivityId())
                 .build());
 
-        // todo 对redis库存进行恢复
-        // 通过策略模式，对三种情况分开讨论，已经成团的就不需要恢复
-//        TradeLockRuleFilterFactory.DynamicContext dynamicContext = new TradeLockRuleFilterFactory.DynamicContext();
-//        tradeRepository.recoveryTeamStock(dynamicContext.generateRecoveryTeamStockKey(teamId),60);
-//
         return TradeRefundBehaviorEntity.builder()
                 .userId(tradeRefundCommandEntity.getUserId())
                 .orderId(orderId)
                 .teamId(teamId)
                 .tradeRefundBehaviorEnum(TradeRefundBehaviorEntity.TradeRefundBehaviorEnum.SUCCESS)
                 .build();
+    }
+
+    @Override
+    public void restoreTeamLockStock(TeamRefundSuccess teamRefundSuccess) throws Exception {
+        log.info("逆向流程，恢复锁单量 userId:{} activityId:{} teamId:{}", teamRefundSuccess.getUserId(), teamRefundSuccess.getActivityId(), teamRefundSuccess.getTeamId());
+        String type = teamRefundSuccess.getType();
+
+        // 根据枚举值获取对应的退单类型
+        RefundTypeEnumVO refundTypeEnumVO = RefundTypeEnumVO.getRefundTypeEnumVOByCode(type);
+        IRefundOrderStrategy refundOrderStrategy = refundOrderStrategyMap.get(refundTypeEnumVO.getStrategy());
+
+        // 逆向库存操作，恢复锁单量
+        refundOrderStrategy.reverseStock(teamRefundSuccess);
     }
 }

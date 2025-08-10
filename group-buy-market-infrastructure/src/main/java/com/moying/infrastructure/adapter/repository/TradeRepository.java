@@ -159,6 +159,7 @@ public class TradeRepository implements ITradeRepository {
                 .payPrice(groupBuyOrderList.getPayPrice())
                 .originalPrice(groupBuyOrderList.getDeductionPrice())
                 .tradeOrderStatusEnumVO(TradeOrderStatusEnumVO.CREATE)
+                .teamId(teamId)
                 .build();
     }
 
@@ -397,6 +398,33 @@ public class TradeRepository implements ITradeRepository {
     }
 
     @Override
+    public void refund2AddRecovery(String recoveryTeamStockKey, String orderId) {
+        // 如果恢复库存key为空，直接返回
+        if (StringUtils.isBlank(recoveryTeamStockKey) || StringUtils.isBlank(orderId)) {
+            return;
+        }
+
+        // 使用orderId 作为key，幂等处理
+        String lockKey = "refund_lock_" + orderId;
+        // 尝试获取分布式锁，防止重复操作，过期时间30天
+        Boolean lockAcquired = redisService.setNx(lockKey, 30 * 24 * 60 * 60 * 1000L, TimeUnit.MINUTES);
+        if (!lockAcquired) {
+            log.error("退单增加库存恢复失败，订单已处理 {} {}", orderId, recoveryTeamStockKey);
+            return;
+        }
+        try {
+            // 增加库存恢复
+            redisService.rPush(recoveryTeamStockKey, 1);
+        } catch (Exception e) {
+            log.error("订单 {} 恢复库存失败，恢复库存key: {}", orderId, recoveryTeamStockKey, e);
+            // 如果抛异常则释放锁，允许MQ重新消费恢复库存
+            redisService.remove(lockKey);
+            throw e;
+        }
+        // 不能使用 finally释放锁，不然可能会重复释放库存
+    }
+
+    @Override
     public void unLockUserLock(String userLockKey) {
          redisService.remove(userLockKey);
     }
@@ -612,4 +640,6 @@ public class TradeRepository implements ITradeRepository {
                 .build();
 
     }
+
+
 }

@@ -165,4 +165,11 @@ public interface ITradeRepository {
      * @return 通知任务实体
      */
     NotifyTaskEntity paidTeam2Refund(GroupBuyRefundAggregate groupBuyRefundAggregate);
+
+    /**
+     * 退单增加库存恢复
+     * @param recoveryTeamStockKey 团购团队库存恢复键
+     * @param orderId 订单ID
+     */
+    void refund2AddRecovery(String recoveryTeamStockKey, String orderId);
 }

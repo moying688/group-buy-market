@@ -92,16 +92,16 @@ public enum RefundTypeEnumVO {
      * @param code 枚举值
      * @return 退款类型枚举
      */
-    public static RefundTypeEnumVO valueOf(Integer code) {
+    public static RefundTypeEnumVO getRefundTypeEnumVOByCode(String code) {
         switch (code) {
-            case 1:
+            case "unpaid_unlock":
                 return UNPAID_UNLOCK;
-            case 2:
+            case "paid_unformed":
                 return PAID_UNFORMED;
-            case 3:
+            case "paid_formed":
                 return PAID_FORMED;
             default:
-                throw new IllegalArgumentException("退单类型枚举值不存在: " + code);
+                throw new RuntimeException("退单类型枚举值不存在: " + code);
         }
     }
 

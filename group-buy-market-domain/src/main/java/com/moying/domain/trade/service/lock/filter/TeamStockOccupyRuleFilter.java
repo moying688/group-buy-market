@@ -42,7 +42,9 @@ public class TeamStockOccupyRuleFilter implements ILogicHandler<TradeLockRuleCom
         Integer validTime = groupBuyActivity.getValidTime();
         String teamStockKey = dynamicContext.generateTeamStockKey(teamId);
         String recoveryTeamStockKey = dynamicContext.generateRecoveryTeamStockKey(teamId);
-        String userLockKey = dynamicContext.generateUserLockKey(requestParameter.getUserId(), teamId);
+//        String userLockKey = dynamicContext.generateUserLockKey(requestParameter.getUserId(), teamId);
+        Long activityId = groupBuyActivity.getActivityId();
+        String userLockKey = TradeLockRuleFilterFactory.generateUserLockKey(activityId, teamId, requestParameter.getUserId());
 
         boolean status = repository.occupyTeamStock(teamStockKey, recoveryTeamStockKey,userLockKey, target, validTime);
 

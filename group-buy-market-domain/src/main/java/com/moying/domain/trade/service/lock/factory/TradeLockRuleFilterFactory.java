@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 public class TradeLockRuleFilterFactory {
 
 
+    private static final String teamStockKey = "group_buy_market_team_stock_key_";
     @Bean("tradeRuleFilter")
     public BusinessLinkedList<TradeLockRuleCommandEntity, DynamicContext, TradeLockRuleFilterBackEntity>
     tradeRuleFilter(ActivityUsabilityRuleFilter activityUsabilityRuleFilter, UserTakeLimitRuleFilter userTakeLimitRuleFilter
@@ -43,7 +44,7 @@ public class TradeLockRuleFilterFactory {
     @Builder
     public static class DynamicContext {
 
-        private String teamStockKey = "group_buy_market_team_stock_key_";
+//        private String teamStockKey = "group_buy_market_team_stock_key_";
 
         private GroupBuyActivityEntity groupBuyActivity;
 
@@ -51,18 +52,27 @@ public class TradeLockRuleFilterFactory {
 
         public String generateTeamStockKey(String teamId) {
             if (StringUtils.isBlank(teamId)) return null;
-            return teamStockKey + groupBuyActivity.getActivityId() + "_" + teamId;
+            return TradeLockRuleFilterFactory.generateTeamStockKey(groupBuyActivity.getActivityId(), teamId);
         }
 
         public String generateRecoveryTeamStockKey(String teamId) {
             if (StringUtils.isBlank(teamId)) return null;
-            return teamStockKey + groupBuyActivity.getActivityId() + "_" + teamId + "_recovery";
+            return TradeLockRuleFilterFactory.generateRecoveryTeamStockKey(groupBuyActivity.getActivityId(), teamId);
         }
+//        public String generateUserLockKey(String userId, String teamId) {
+//            if (StringUtils.isBlank(userId)) return null;
+//            return "group_buy_market_user_lock_key_" + groupBuyActivity.getActivityId() + "_" + teamId + "_" + userId;
+//        }
+    }
+    public static String generateTeamStockKey(Long activityId, String teamId){
+        return teamStockKey + activityId + "_" + teamId;
+    }
 
-        public String generateUserLockKey(String userId, String teamId) {
-            if (StringUtils.isBlank(userId)) return null;
-            return "group_buy_market_user_lock_key_" + groupBuyActivity.getActivityId() + "_" + teamId + "_" + userId;
-        }
+    public static String generateRecoveryTeamStockKey(Long activityId, String teamId) {
+        return teamStockKey + activityId + "_" + teamId + "_recovery";
+    }
 
+    public static String generateUserLockKey(Long activityId, String teamId, String userId) {
+        return "group_buy_market_user_lock_key_" + activityId + "_" + teamId + "_" + userId;
     }
 }
