@@ -9,5 +9,10 @@ import com.moying.domain.trade.model.entity.NotifyTaskEntity;
  */
 
 public interface ITradePort {
+    /**
+     * 团购订单通知
+     * @param notifyTask 通知任务实体
+     * @return 通知结果
+     */
     String groupBuyNotify(NotifyTaskEntity notifyTask);
 }

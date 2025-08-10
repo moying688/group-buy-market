@@ -61,6 +61,7 @@ public class TradeRefundOrderService implements ITradeRefundOrderService {
 
         // 3. 状态类型判断 - 使用策略模式获取退款类型
         RefundTypeEnumVO refundType = RefundTypeEnumVO.getRefundStrategy(groupBuyOrderEnumVO, tradeOrderStatusEnumVO);
+
         IRefundOrderStrategy refundOrderStrategy = refundOrderStrategyMap.get(refundType.getStrategy());
         refundOrderStrategy.refundOrder(TradeRefundOrderEntity.builder()
                 .userId(tradeRefundCommandEntity.getUserId())
@@ -71,9 +72,9 @@ public class TradeRefundOrderService implements ITradeRefundOrderService {
 
         // todo 对redis库存进行恢复
         // 通过策略模式，对三种情况分开讨论，已经成团的就不需要恢复
-        TradeLockRuleFilterFactory.DynamicContext dynamicContext = new TradeLockRuleFilterFactory.DynamicContext();
-        tradeRepository.recoveryTeamStock(dynamicContext.generateRecoveryTeamStockKey(teamId),60);
-
+//        TradeLockRuleFilterFactory.DynamicContext dynamicContext = new TradeLockRuleFilterFactory.DynamicContext();
+//        tradeRepository.recoveryTeamStock(dynamicContext.generateRecoveryTeamStockKey(teamId),60);
+//
         return TradeRefundBehaviorEntity.builder()
                 .userId(tradeRefundCommandEntity.getUserId())
                 .orderId(orderId)

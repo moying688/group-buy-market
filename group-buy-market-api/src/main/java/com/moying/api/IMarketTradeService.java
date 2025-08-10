@@ -13,7 +13,18 @@ import com.moying.api.response.Response;
  */
 
 public interface IMarketTradeService {
+
+    /**
+     * 预购订单
+     * @param lockMarketPayOrderRequestDTO 预购订单请求DTO
+     * @return 预购订单响应DTO
+     */
     Response<LockMarketPayOrderResponseDTO> lockMarketPayOrder(LockMarketPayOrderRequestDTO lockMarketPayOrderRequestDTO);
 
+    /**
+     * 结算订单
+     * @param requestDTO 结算订单请求DTO
+     * @return 结算订单响应DTO
+     */
     Response<SettlementMarketPayOrderResponseDTO> settlementMarketPayOrder(SettlementMarketPayOrderRequestDTO requestDTO);
 }

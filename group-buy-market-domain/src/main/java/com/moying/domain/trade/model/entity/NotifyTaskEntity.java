@@ -42,8 +42,13 @@ public class NotifyTaskEntity {
      */
     private String parameterJson;
 
+    /**
+     * 唯一标识
+     */
+    private String uuid;
+
     public String lockKey() {
-        return "notify_job_lock_key_" + this.teamId;
+        return "notify_job_lock_key_" + this.uuid;
     }
 
 }

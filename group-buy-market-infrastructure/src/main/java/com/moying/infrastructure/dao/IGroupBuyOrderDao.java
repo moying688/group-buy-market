@@ -109,9 +109,23 @@ public interface IGroupBuyOrderDao {
     int cancelTeam(String teamId);
 
     /**
-     * 订单退款
+     * 订单退款 （已支付未成团
      * @param groupBuyOrderReq 退款订单
      * @return 退款订单数量
      */
     int paid2Refund(GroupBuyOrder groupBuyOrderReq);
+
+    /**
+     * 团队订单退款 ( 非最后一单退单
+     * @param groupBuyOrderReq 退款订单
+     * @return 退款订单数量
+     */
+    int paidTeam2Refund(GroupBuyOrder groupBuyOrderReq);
+
+    /**
+     * 团队订单退款 (最后一单退单
+     * @param groupBuyOrderReq 退款订单
+     * @return 退款订单数量
+     */
+    int paidTeam2RefundFail(GroupBuyOrder groupBuyOrderReq);
 }

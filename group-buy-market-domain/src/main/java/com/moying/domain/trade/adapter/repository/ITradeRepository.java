@@ -148,8 +148,9 @@ public interface ITradeRepository {
     /**
      * 待退款订单聚合(未成团 未支付)
      * @param groupBuyRefundAggregate 待退款订单聚合
+     * @return 通知任务实体
      */
-    void unpaid2Refund(GroupBuyRefundAggregate groupBuyRefundAggregate);
+    NotifyTaskEntity unpaid2Refund(GroupBuyRefundAggregate groupBuyRefundAggregate);
 
     /**
      * 待退款订单聚合(未成团 已支付)
@@ -157,4 +158,11 @@ public interface ITradeRepository {
      * @return 通知任务实体
      */
     NotifyTaskEntity paid2Refund(GroupBuyRefundAggregate groupBuyRefundAggregate);
+
+    /**
+     * 已退款订单聚合(已成团 已支付)
+     * @param groupBuyRefundAggregate 已退款订单聚合
+     * @return 通知任务实体
+     */
+    NotifyTaskEntity paidTeam2Refund(GroupBuyRefundAggregate groupBuyRefundAggregate);
 }

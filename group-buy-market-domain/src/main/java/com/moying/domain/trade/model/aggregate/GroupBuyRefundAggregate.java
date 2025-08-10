@@ -2,6 +2,7 @@ package com.moying.domain.trade.model.aggregate;
 
 import com.moying.domain.trade.model.entity.TradeRefundOrderEntity;
 import com.moying.domain.trade.model.valobj.GroupBuyProgressVO;
+import com.moying.types.enums.GroupBuyOrderEnumVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +29,11 @@ public class GroupBuyRefundAggregate {
      * 退单进度
      */
     private GroupBuyProgressVO groupBuyProgressVO;
+
+    /**
+     * 团购订单状态
+     */
+    private GroupBuyOrderEnumVO groupBuyOrderEnumVO;
 
     /**
      * 待退款订单聚合(未成团 未支付)
@@ -58,4 +64,19 @@ public class GroupBuyRefundAggregate {
         return groupBuyRefundAggregate;
     }
 
+    public static GroupBuyRefundAggregate buildPaidTeam2RefundAggregate(TradeRefundOrderEntity tradeRefundOrderEntity,
+                                                       Integer lockCount,
+                                                       Integer completeCount,
+                                                       GroupBuyOrderEnumVO groupBuyOrderEnumVO) {
+        GroupBuyRefundAggregate groupBuyRefundAggregate = new GroupBuyRefundAggregate();
+        groupBuyRefundAggregate.setTradeRefundOrderEntity(tradeRefundOrderEntity);
+        groupBuyRefundAggregate.setGroupBuyProgressVO(
+                GroupBuyProgressVO.builder()
+                        .lockCount(lockCount)
+                        .completeCount(completeCount)
+                        .build());
+
+        groupBuyRefundAggregate.setGroupBuyOrderEnumVO(groupBuyOrderEnumVO);
+        return groupBuyRefundAggregate;
+    }
 }

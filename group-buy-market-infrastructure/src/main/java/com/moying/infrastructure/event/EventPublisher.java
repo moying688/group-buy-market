@@ -23,6 +23,8 @@ public class EventPublisher {
     public void publish(String topic,String message){
         try {
             log.info("Publishing message to topic: {}, message: {}", topic, message);
+
+            // 持久化
             rocketMQTemplate.convertAndSend(topic, message);
         }catch (Exception e){
             log.error("发送MQ消息失败 team_success message:{}", message, e);

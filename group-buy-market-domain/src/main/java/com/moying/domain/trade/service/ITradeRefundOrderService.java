@@ -10,7 +10,10 @@ import com.moying.domain.trade.model.entity.TradeRefundCommandEntity;
  */
 
 public interface ITradeRefundOrderService {
-
-
+    /**
+     * 退款订单
+     * @param tradeRefundCommandEntity 退款命令实体
+     * @return 退款行为实体
+     */
     TradeRefundBehaviorEntity refundOrder(TradeRefundCommandEntity tradeRefundCommandEntity);
 }

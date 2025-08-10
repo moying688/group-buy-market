@@ -132,6 +132,22 @@
         where team_id = #{teamId}
         and status = 0
     </update>
+    <update id="paidTeam2Refund" parameterType="com.moying.infrastructure.dao.po.GroupBuyOrder">
+        update group_buy_order
+        set complete_count = complete_count + #{completeCount},
+            lock_count = lock_count + #{lockCount},
+            status = 3,
+            update_time = now()
+        where team_id = #{teamId} and (status = 1 or status = 3) and complete_count > 1
+    </update>
+    <update id="paidTeam2RefundFail">
+        update group_buy_order
+        set complete_count = complete_count + #{completeCount},
+            lock_count = lock_count + #{lockCount},
+            status = 2,
+            update_time = now()
+        where team_id = #{teamId} and (status = 1 or status = 3) and complete_count = 1
+    </update>
 
     <delete id="cancelTeam">
         delete from group_buy_order

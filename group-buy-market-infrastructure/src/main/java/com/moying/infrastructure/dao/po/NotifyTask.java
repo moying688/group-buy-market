@@ -24,6 +24,8 @@ public class NotifyTask {
     private Long activityId;
     /** 拼单组队ID */
     private String teamId;
+    /** 回调种类 */
+    private String notifyCategory;
     /** 回调接口 */
     private String notifyUrl;
     /** 回调次数 */
@@ -36,6 +38,8 @@ public class NotifyTask {
     private String notifyMQ;
     /** 参数对象 */
     private String parameterJson;
+    /** 唯一标识 */
+    private String uuid;
     /** 创建时间 */
     private Date createTime;
     /** 更新时间 */
